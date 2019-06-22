@@ -28,7 +28,7 @@ namespace 一丙英文背起來
             /* \W 匹配任何非文字字元 (亦可用^\w) */
             try
             {
-                return Regex.Replace(strIn, @"[\W]+", "", RegexOptions.None, TimeSpan.FromSeconds(1.5));
+                return Regex.Replace(strIn, @"[\W]+", string.Empty, RegexOptions.None, TimeSpan.FromSeconds(1.5));
             }
             /* 替換時間長於1.5秒就放棄替換 */
             catch (RegexMatchTimeoutException)
@@ -53,8 +53,8 @@ namespace 一丙英文背起來
 
                     foreach (Match mt in chtWords)
                     {
-                        string chtWordsName = mt.Value.Replace("cht = ", "").Trim('"');
-                        App.LRC.Add(new ResCless { NameCht = chtWordsName, NameEng = "" });
+                        string chtWordsName = mt.Value.Replace("cht = ", string.Empty).Trim('"');
+                        App.LRC.Add(new ResCless { NameCht = chtWordsName, NameEng = string.Empty, Proficiency = string.Empty });
                     }
 
                     int i = 0;
@@ -63,7 +63,7 @@ namespace 一丙英文背起來
                         if (i > App.LRC.Count - 1)
                             break;
 
-                        string engWordsName = mt.Value.Replace("eng = ", "").Trim('"');
+                        string engWordsName = mt.Value.Replace("eng = ", string.Empty).Trim('"');
                         App.LRC[i].NameEng = engWordsName;
                         i++;
                     }
@@ -103,13 +103,17 @@ namespace 一丙英文背起來
                     int count = 0, i = 0;
                     foreach (Excel.Range item in SrcRange)
                     {
-                        if (count % 2 == 0)
+                        if (count % 3 == 0)
                         {
-                            App.LRC.Add(new ResCless { NameCht = item.Cells.Text, NameEng = "" });
+                            App.LRC.Add(new ResCless { NameCht = item.Cells.Text, NameEng = string.Empty, Proficiency = string.Empty });
                         }
-                        else if (count % 2 == 1)
+                        else if (count % 3 == 1)
                         {
                             App.LRC[i].NameEng = item.Cells.Text;
+                        }
+                        else if (count % 3 == 2)
+                        {
+                            App.LRC[i].Proficiency = item.Cells.Text;
                             i++;
                         }
                         count++;
@@ -152,10 +156,13 @@ namespace 一丙英文背起來
 
             private static string LRC2txt()
             {
-                string list = "";
+                string list = string.Empty;
                 for (int i = 0; i < App.LRC.Count; i++)
                 {
-                    list += "cht = \"" + App.LRC[i].NameCht + "\"" + Environment.NewLine + "eng = \"" + App.LRC[i].NameEng + "\"" + Environment.NewLine;
+                    list += "cht = \"" + App.LRC[i].NameCht + "\"" + Environment.NewLine +
+                        "eng = \"" + App.LRC[i].NameEng + "\"" + Environment.NewLine +
+                        //"pfc = \"" + App.LRC[i].Proficiency + "\"" + Environment.NewLine;
+                        "pfc = \"" + 0 + "\"" + Environment.NewLine;
                 }
                 return list;
             }
@@ -183,6 +190,8 @@ namespace 一丙英文背起來
                     {
                         SrcExcelApp.Cells[i, 1] = App.LRC[i - 1].NameCht;
                         SrcExcelApp.Cells[i, 2] = App.LRC[i - 1].NameEng;
+                        //SrcExcelApp.Cells[i, 3] = App.LRC[i - 1].Proficiency;
+                        SrcExcelApp.Cells[i, 3] = 0;
                     }
 
                     /*

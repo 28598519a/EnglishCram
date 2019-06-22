@@ -4,6 +4,7 @@ using System.Linq;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using System.Text;
 
 namespace 一丙英文背起來
 {
@@ -49,6 +50,8 @@ namespace 一丙英文背起來
                 File.Delete(App.Root + "\\UserSetting.ini");
                 System.Windows.MessageBox.Show("設定讀取失敗" + Environment.NewLine + "執行部分設定初始化...", "異常");
             }
+
+            WebServices.CheckVersion(0.8);
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -265,7 +268,7 @@ namespace 一丙英文背起來
                     {
                         App.Again_Count++;
                         lb_Again_count.Content = App.Again_Count;
-                        tb_Again.Text = "";
+                        tb_Again.Text = string.Empty;
 
                         if (App.Again_Count == AgainTimes)
                         {
@@ -277,7 +280,7 @@ namespace 一丙英文背起來
                 }
                 else
                 {
-                    tb_Again.Text = "";
+                    tb_Again.Text = string.Empty;
                 }
             }
             else if (rb_Answer_Cht.IsChecked == true)
@@ -288,7 +291,7 @@ namespace 一丙英文背起來
                     {
                         App.Again_Count++;
                         lb_Again_count.Content = App.Again_Count;
-                        tb_Again.Text = "";
+                        tb_Again.Text = string.Empty;
 
                         if (App.Again_Count == AgainTimes)
                         {
@@ -300,7 +303,7 @@ namespace 一丙英文背起來
                 }
                 else
                 {
-                    tb_Again.Text = "";
+                    tb_Again.Text = string.Empty;
                 }
             }
         }

@@ -6,10 +6,10 @@ namespace 一丙英文背起來
     {
         public static void ClearText()
         {
-            ((MainWindow)Application.Current.MainWindow).lb_Question.Content = "";
-            ((MainWindow)Application.Current.MainWindow).lb_AnswerCheck.Content = "";
-            ((MainWindow)Application.Current.MainWindow).tb_Answer.Text = "";
-            ((MainWindow)Application.Current.MainWindow).tb_Again.Text = "";
+            ((MainWindow)Application.Current.MainWindow).lb_Question.Content = string.Empty;
+            ((MainWindow)Application.Current.MainWindow).lb_AnswerCheck.Content = string.Empty;
+            ((MainWindow)Application.Current.MainWindow).tb_Answer.Text = string.Empty;
+            ((MainWindow)Application.Current.MainWindow).tb_Again.Text = string.Empty;
         }
 
         public static void Test(bool IsEnabled)
@@ -31,6 +31,18 @@ namespace 一丙英文背起來
             ClearText();
             App.Index++;
             Test(true);
+        }
+
+        public static void MainVisibility(bool show)
+        {
+            if (show)
+            {
+                ((MainWindow)Application.Current.MainWindow).Show();
+            }
+            else
+            {
+                ((MainWindow)Application.Current.MainWindow).Hide();
+            }
         }
     }
 }

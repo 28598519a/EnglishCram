@@ -69,7 +69,7 @@ namespace 一丙英文背起來
             public string IniReadValue(string Section, string Key, string inipath)
             {
                 StringBuilder temp = new StringBuilder(255);
-                int i = GetPrivateProfileString(Section, Key, "", temp, 255, App.Root + "\\" + inipath);
+                int i = GetPrivateProfileString(Section, Key, string.Empty, temp, 255, App.Root + "\\" + inipath);
                 return temp.ToString();
             }
         }
