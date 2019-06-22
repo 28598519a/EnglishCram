@@ -19,6 +19,9 @@ namespace 一丙英文背起來
             LoadSetting.Init_Setting(); //讀取設定
             try
             {
+                tb_Again_times.Text = App.Set_tb_Again_times;
+                cb_FileCovert.IsChecked = Convert.ToBoolean(App.Set_cb_FileCovert);
+
                 if (Convert.ToBoolean(App.Set_rb_Answer_Eng) != true)
                 {
                     rb_Answer_Eng.IsChecked = false;
@@ -41,6 +44,8 @@ namespace 一丙英文背起來
         {
             App.Set_rb_Answer_Eng = rb_Answer_Eng.IsChecked.ToString();
             App.Set_rb_Order = rb_Order.IsChecked.ToString();
+            App.Set_tb_Again_times = tb_Again_times.Text;
+            App.Set_cb_FileCovert = cb_FileCovert.IsChecked.ToString();
 
             /* 結束程式時保存設定 */
             LoadSetting.SaveSetting();
@@ -62,6 +67,8 @@ namespace 一丙英文背起來
 
             if (openFileDialog.ShowDialog() == true)
             {
+                lb_Database_name.Content = Path.GetFileName(openFileDialog.FileName);
+
                 if (Path.GetExtension(openFileDialog.FileName) == ".txt")
                 {
                     Database.Load_res_list(File.ReadAllText(openFileDialog.FileName));
@@ -69,7 +76,11 @@ namespace 一丙英文背起來
                     if (cb_FileCovert.IsChecked == true)
                     {
                         File.WriteAllBytes(Path.GetFileNameWithoutExtension(openFileDialog.FileName) + ".db", GZip.Compress(File.ReadAllBytes(openFileDialog.FileName)));
-                        //File.Delete(openFileDialog.FileName);
+
+                        if (cb_FileCovert_delete.IsChecked == true)
+                        {
+                            File.Delete(openFileDialog.FileName);
+                        }
                     }
                 }
                 else if (Path.GetExtension(openFileDialog.FileName) == ".db")
@@ -89,8 +100,8 @@ namespace 一丙英文背起來
 
         private void Btn_Default_db_Click(object sender, RoutedEventArgs e)
         {
-            //File.WriteAllBytes("Database.db", GZip.Compress(File.ReadAllBytes("Database.db")));
-            //File.WriteAllBytes("Database.txt", GZip.Decompress(File.ReadAllBytes("Database.db")));
+            lb_Database_name.Content = "Database.db";
+
             try
             {
                 var stream = new StreamReader(new MemoryStream(GZip.Decompress(File.ReadAllBytes("Database.db"))));
@@ -109,7 +120,7 @@ namespace 一丙英文背起來
                 btn_test_start.Visibility = Visibility.Hidden;
                 btn_test_stop.Visibility = Visibility.Visible;
 
-                App.Control.Test(true);
+                Control.Test(true);
 
                 List<int> listLinq = new List<int>(Enumerable.Range(0, App.LRC.Count));
 
@@ -140,9 +151,9 @@ namespace 一丙英文背起來
             btn_test_start.Visibility = Visibility.Visible;
             btn_test_stop.Visibility = Visibility.Hidden;
 
-            App.Control.ClearText();
-            App.Control.Exercise(false);
-            App.Control.Test(false);
+            Control.ClearText();
+            Control.Again(false);
+            Control.Test(false);
         }
 
         private void Btn_Answer_Click(object sender, RoutedEventArgs e)
@@ -151,7 +162,7 @@ namespace 一丙英文背起來
             {
                 if (Database.CleanInput(tb_Answer.Text.ToLower()) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameEng.ToLower()))
                 {
-                    App.Control.ClearText();
+                    Control.ClearText();
                     lb_AnswerCheck.Content = "正確!";
                     App.Index++;
                     NewQuestion();
@@ -159,111 +170,84 @@ namespace 一丙英文背起來
                 else
                 {
                     lb_AnswerCheck.Content = "錯誤!" + Environment.NewLine + "正確答案為 " + App.LRC[App.ResultList.ToList()[App.Index]].NameEng;
-                    App.Control.Test(false);
-                    App.Control.Exercise(true);
+                    Control.Test(false);
+                    Control.Again(true);
                 }
             }
             else if (rb_Answer_Cht.IsChecked == true)
             {
                 if (Database.CleanInput(tb_Answer.Text) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameCht))
                 {
-                    App.Control.ClearText();
+                    Control.ClearText();
                     lb_AnswerCheck.Content = "正確!";
                     App.Index++;
                     NewQuestion();
                 }
                 else
                 {
-                    App.Control.Test(false);
+                    Control.Test(false);
                     lb_AnswerCheck.Content = "錯誤!" + Environment.NewLine + "正確答案為 " + App.LRC[App.ResultList[App.Index]].NameCht;
                 }
             }
         }
 
-        private void Btn_Again1_Click(object sender, RoutedEventArgs e)
+        private void Btn_Again_Click(object sender, RoutedEventArgs e)
         {
             if (rb_Answer_Eng.IsChecked == true)
             {
-                if (Database.CleanInput(tb_Again1.Text.ToLower()) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameEng.ToLower()))
+                if (Database.CleanInput(tb_Again.Text.ToLower()) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameEng.ToLower()))
                 {
-                    App.Control.Again1(false);
+                    if (App.Again_Count < Convert.ToInt32(tb_Again_times.Text))
+                    {
+                        App.Again_Count++;
+                        lb_Again_count.Content = App.Again_Count;
+                        tb_Again.Text = "";
+
+                        if (App.Again_Count == Convert.ToInt32(tb_Again_times.Text))
+                        {
+                            Control.EndExercise();
+                            NewQuestion();
+                        }
+                    }
                 }
                 else
                 {
-                    tb_Again1.Text = "";
+                    tb_Again.Text = "";
                 }
             }
             else if (rb_Answer_Cht.IsChecked == true)
             {
-                if (Database.CleanInput(tb_Again1.Text) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameCht))
+                if (Database.CleanInput(tb_Again.Text) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameCht))
                 {
-                    App.Control.Again1(false);
+                    if (App.Again_Count < Convert.ToInt32(tb_Again_times.Text))
+                    {
+                        App.Again_Count++;
+                        lb_Again_count.Content = App.Again_Count;
+                        tb_Again.Text = "";
+
+                        if (App.Again_Count == Convert.ToInt32(tb_Again_times.Text))
+                        {
+                            Control.EndExercise();
+                            NewQuestion();
+                        }
+                    }
                 }
                 else
                 {
-                    tb_Again1.Text = "";
+                    tb_Again.Text = "";
                 }
             }            
         }
 
-        private void Btn_Again2_Click(object sender, RoutedEventArgs e)
+        private void Cb_FileCovert_Checked(object sender, RoutedEventArgs e)
         {
-            if (rb_Answer_Eng.IsChecked == true)
-            {
-                if (Database.CleanInput(tb_Again2.Text.ToLower()) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameEng.ToLower()))
-                {
-                    App.Control.Again2(false);
-                }
-                else
-                {
-                    tb_Again2.Text = "";
-                }
-            }
-            else if (rb_Answer_Cht.IsChecked == true)
-            {
-                if (Database.CleanInput(tb_Again1.Text.ToLower()) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameCht.ToLower()))
-                {
-                    App.Control.Again2(false);
-                }
-                else
-                {
-                    tb_Again2.Text = "";
-                }
-            }
+            cb_FileCovert_delete.IsEnabled = true;
         }
 
-        private void Btn_Again3_Click(object sender, RoutedEventArgs e)
+        private void Cb_FileCovert_Unchecked(object sender, RoutedEventArgs e)
         {
-            if (rb_Answer_Eng.IsChecked == true)
-            {
-                if (Database.CleanInput(tb_Again3.Text.ToLower()) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameEng.ToLower()))
-                {
-                    App.Control.Again3(false);
-                    App.Control.ClearText();
-                    App.Index++;
-                    NewQuestion();
-                    App.Control.Test(true);
-                }
-                else
-                {
-                    tb_Again3.Text = "";
-                }
-            }
-            else if (rb_Answer_Cht.IsChecked == true)
-            {
-                if (Database.CleanInput(tb_Again1.Text) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameCht))
-                {
-                    App.Control.Again3(false);
-                    App.Control.ClearText();
-                    App.Index++;
-                    NewQuestion();
-                    App.Control.Test(true);
-                }
-                else
-                {
-                    tb_Again3.Text = "";
-                }
-            }
+            cb_FileCovert_delete.IsChecked = false;
+            cb_FileCovert_delete.IsEnabled = false;
         }
     }
 }

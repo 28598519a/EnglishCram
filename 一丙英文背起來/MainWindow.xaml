@@ -5,41 +5,36 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:一丙英文背起來"
         mc:Ignorable="d"
-        Title="一丙英文背起來 ( Ver 0.3Beta )" Height="450" Width="750" Closed="Window_Closed">
+        Title="一丙英文背起來 ( Ver 0.4Beta )" Height="450" Width="750" Closed="Window_Closed" ResizeMode="CanMinimize">
     <Grid>
-        <Label Content="測試：" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="lb_tpd" Content="107360715" HorizontalAlignment="Left" Margin="58,0,0,0" VerticalAlignment="Top"/>
+        <Label Content="開發者：" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lb_tpd" Content="107360715 (劃破黑夜)" HorizontalAlignment="Left" Margin="58,0,0,0" VerticalAlignment="Top"/>
 
-        <TabControl x:Name="tbc_main" Height="344" Margin="0,76,2,0" VerticalAlignment="Top" >
+        <TabControl x:Name="tbc_main" Height="344" Margin="0,76,2,0" VerticalAlignment="Top" SelectedIndex="1" >
             <TabItem Header="一般" Width="80">
-                <Grid Background="#FFE5E5E5" Margin="0,0,-0.2,0">
-                    <GroupBox Header="測驗選項" HorizontalAlignment="Left" Height="45" Margin="539,30,0,0" VerticalAlignment="Top" Width="185" FontSize="14" Foreground="Black"/>
-                    <GroupBox Header="出題模式" HorizontalAlignment="Left" Height="47" Margin="539,87,0,0" VerticalAlignment="Top" Width="185" FontSize="14"/>
-                    <GroupBox Header="保留" HorizontalAlignment="Left" Height="75" Margin="539,147,0,0" VerticalAlignment="Top" Width="185" FontSize="14"/>
-                    <GroupBox Header="保留" HorizontalAlignment="Left" Height="45" Margin="539,232,0,0" VerticalAlignment="Top" Width="185" FontSize="14"/>
+                <Grid Background="#FFE5E5E5">
+                    <GroupBox Header="測驗選項" HorizontalAlignment="Left" Height="45" Margin="539,175,0,0" VerticalAlignment="Top" Width="185" FontSize="14" Foreground="Black"/>
+                    <GroupBox Header="出題模式" HorizontalAlignment="Left" Height="47" Margin="539,236,0,0" VerticalAlignment="Top" Width="185" FontSize="14"/>
 
-                    <TextBox x:Name="tb_Answer" HorizontalAlignment="Left" Height="25" Margin="211,87,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="265" IsEnabled="False" ContextMenu="{x:Null}" AllowDrop="False"/>
-                    <TextBox x:Name="tb_Again1" HorizontalAlignment="Left" Height="25" Margin="211,181,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="265" IsEnabled="False" ContextMenu="{x:Null}" AllowDrop="False"/>
-                    <Label Content="題目 :" HorizontalAlignment="Left" Margin="161,40,0,0" VerticalAlignment="Top" FontSize="16"/>
-                    <CheckBox x:Name="cb_tpa" Content="Temp" HorizontalAlignment="Left" Margin="553,172,0,0" VerticalAlignment="Top"/>
-                    <RadioButton GroupName="ResType" x:Name="rb_Random" Content="隨機" HorizontalAlignment="Left" Margin="553,110,0,0" VerticalAlignment="Top" IsChecked="True" RenderTransformOrigin="-0.357,0.676"/>
-                    <RadioButton GroupName="ResType" x:Name="rb_Order" Content="依序" HorizontalAlignment="Left" Margin="630,110,0,0" VerticalAlignment="Top" IsChecked="True"/>
-
-                    <Button x:Name="btn_test_start" Content="開始測驗" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top" Width="123" Click="Btn_test_start_Click" Height="86" FontSize="24"/>
-                    <RadioButton GroupName="catchdataType" x:Name="rb_Answer_Cht" Content="回答中文" HorizontalAlignment="Left" Margin="553,50,0,0" VerticalAlignment="Top" IsChecked="True"/>
-                    <RadioButton GroupName="catchdataType" x:Name="rb_Answer_Eng" Content="回答英文" HorizontalAlignment="Left" Margin="630,50,0,0" VerticalAlignment="Top" IsChecked="True"/>
-                    <CheckBox x:Name="cb_tpc" Content="Temp" HorizontalAlignment="Left" Margin="553,254,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="cb_tpb" Content="Temp" HorizontalAlignment="Left" Margin="553,195,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="tb_Again2" HorizontalAlignment="Left" Height="25" Margin="211,216,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="265" IsEnabled="False" ContextMenu="{x:Null}" AllowDrop="False"/>
-                    <TextBox x:Name="tb_Again3" HorizontalAlignment="Left" Height="25" Margin="211,251,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="265" IsEnabled="False" ContextMenu="{x:Null}" AllowDrop="False"/>
-                    <Button x:Name="btn_test_stop" Content="停止測驗" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top" Width="123" Click="Btn_test_stop_Click" Height="86" FontSize="24" Visibility="Hidden"/>
-                    <Label x:Name="lb_Question" Content="" HorizontalAlignment="Left" Margin="216,40,0,0" VerticalAlignment="Top" FontSize="16"/>
-                    <Button x:Name="btn_Answer" Content="送出" HorizontalAlignment="Left" Margin="153,87,0,0" VerticalAlignment="Top" Width="53" Height="25" Click="Btn_Answer_Click" IsEnabled="False"/>
-                    <Label x:Name="lb_AnswerCheck" Content="" HorizontalAlignment="Left" Margin="211,117,0,0" VerticalAlignment="Top" Width="265" Height="59" FontSize="14"/>
-                    <Button x:Name="btn_Again1" Content="送出" HorizontalAlignment="Left" Margin="153,181,0,0" VerticalAlignment="Top" Width="53" Height="25" Click="Btn_Again1_Click" IsEnabled="False"/>
-                    <Button x:Name="btn_Again2" Content="送出" HorizontalAlignment="Left" Margin="153,215,0,0" VerticalAlignment="Top" Width="53" Height="25" Click="Btn_Again2_Click" IsEnabled="False"/>
-                    <Button x:Name="btn_Again3" Content="送出" HorizontalAlignment="Left" Margin="153,250,0,0" VerticalAlignment="Top" Width="53" Height="25" Click="Btn_Again3_Click" IsEnabled="False"/>
-                    <Label Content="練習 :" HorizontalAlignment="Left" Margin="161,147,0,0" VerticalAlignment="Top" FontSize="16"/>
+                    <TextBox x:Name="tb_Answer" HorizontalAlignment="Left" Height="25" Margin="93,71,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="265" IsEnabled="False" ContextMenu="{x:Null}" AllowDrop="False"/>
+                    <TextBox x:Name="tb_Again" HorizontalAlignment="Left" Height="25" Margin="93,151,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="265" IsEnabled="False" ContextMenu="{x:Null}" AllowDrop="False"/>
+                    <Label Content="題目 :" HorizontalAlignment="Left" Margin="43,36,0,0" VerticalAlignment="Top" FontSize="16"/>
+                    <RadioButton GroupName="ResType" x:Name="rb_Random" Content="隨機" HorizontalAlignment="Left" Margin="553,261,0,0" VerticalAlignment="Top" IsChecked="True" RenderTransformOrigin="-0.357,0.676"/>
+                    <RadioButton GroupName="ResType" x:Name="rb_Order" Content="依序" HorizontalAlignment="Left" Margin="630,261,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                    <RadioButton GroupName="catchdataType" x:Name="rb_Answer_Cht" Content="回答中文" HorizontalAlignment="Left" Margin="553,195,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                    <RadioButton GroupName="catchdataType" x:Name="rb_Answer_Eng" Content="回答英文" HorizontalAlignment="Left" Margin="630,195,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                    <Grid Margin="575,59,38.8,170">
+                        <Button x:Name="btn_test_start" Content="開始測驗" Margin="0,0,0,0" Click="Btn_test_start_Click" FontSize="24"/>
+                        <Button x:Name="btn_test_stop" Content="停止測驗" Click="Btn_test_stop_Click" FontSize="24" Margin="0,0,0,0" Visibility="Hidden"/>
+                    </Grid>
+                    <Label x:Name="lb_Question" Content="" HorizontalAlignment="Left" Margin="93,36,0,0" VerticalAlignment="Top" FontSize="16"/>
+                    <Button x:Name="btn_Answer" Content="送出" HorizontalAlignment="Left" Margin="378,71,0,0" VerticalAlignment="Top" Width="53" Height="25" Click="Btn_Answer_Click" IsEnabled="False"/>
+                    <Label x:Name="lb_AnswerCheck" Content="" HorizontalAlignment="Left" Margin="93,181,0,0" VerticalAlignment="Top" Width="265" Height="59" FontSize="16"/>
+                    <Button x:Name="btn_Again" Content="送出" HorizontalAlignment="Left" Margin="378,151,0,0" VerticalAlignment="Top" Width="53" Height="25" Click="Btn_Again_Click" IsEnabled="False"/>
+                    <Label Content="練習 :" HorizontalAlignment="Left" Margin="43,116,0,0" VerticalAlignment="Top" FontSize="16"/>
+                    <TextBox x:Name="tb_Again_times" HorizontalAlignment="Left" Height="23" Margin="177,120,0,0" TextWrapping="Wrap" Text="3" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
+                    <Label Content="/" HorizontalAlignment="Left" Margin="144,114,0,0" VerticalAlignment="Top" FontSize="18" FontWeight="Bold"/>
+                    <Label x:Name="lb_Again_count" Content="0" HorizontalAlignment="Left" Margin="115,117,0,0" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="tbi_db" Header="資料庫"  Width="80">
@@ -53,18 +48,19 @@
                             </GridView>
                         </ListView.View>
                     </ListView>
-                    <GroupBox Header="轉檔(僅為應急功能)" HorizontalAlignment="Left" Height="58" Margin="10,234,0,0" VerticalAlignment="Top" Width="200"/>
-                    <Label x:Name="lb_dabaotime" Content="Temp：" HorizontalAlignment="Left" VerticalAlignment="Top" Height="24" Margin="0,2,0,0" Width="70" />
+                    <GroupBox Header="轉檔" HorizontalAlignment="Left" Height="88" Margin="10,204,0,0" VerticalAlignment="Top" Width="200"/>
+                    <Label x:Name="lb_dabaotime" Content="題庫名稱：" HorizontalAlignment="Left" VerticalAlignment="Top" Height="24" Margin="0,2,0,0" Width="70" />
                     <Button x:Name="btn_Default_db" Content="使用預設題庫" HorizontalAlignment="Left" Margin="10,100,0,0" VerticalAlignment="Top" Width="200" Click="Btn_Default_db_Click" Height="26"/>
-                    <CheckBox x:Name="cb_FileCovert" Content="加載txt時，轉一份 db 格式" HorizontalAlignment="Left" Margin="22,264,0,0" VerticalAlignment="Top" Height="16" Width="173"/>
+                    <CheckBox x:Name="cb_FileCovert" Content="加載txt時，轉一份 db 格式" HorizontalAlignment="Left" Margin="23,234,0,0" VerticalAlignment="Top" Height="16" Width="173" Checked="Cb_FileCovert_Checked" Unchecked="Cb_FileCovert_Unchecked"/>
                     <Label x:Name="lb_dabaotimetxt" Content="" HorizontalAlignment="Left" Margin="60,2,0,308" />
                     <Label Content="資料筆數：" HorizontalAlignment="Left" VerticalAlignment="Top" Height="24" Margin="0,26,0,0" Width="70" />
-                    <Label x:Name="lb_dabaotimetxt_Copy" Content="" HorizontalAlignment="Left" Margin="60,2,0,286" />
+                    <Label x:Name="lb_Database_name" Content="" HorizontalAlignment="Left" Margin="70,02,0,288" />
                     <Label x:Name="lb_lsCount" Content="" HorizontalAlignment="Left" Margin="70,27,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="cb_FileCovert_delete" Content="刪除原檔 (txt)" HorizontalAlignment="Left" Margin="23,264,0,0" VerticalAlignment="Top" Height="16" Width="173" IsEnabled="False"/>
                 </Grid>
             </TabItem>
         </TabControl>
-        <Label x:Name="lb_tpd1" Content="1. New : 答題不再判別標點符號&#xA;2. New : 出答題設定將會被自動保存&#xA;3. New : 支持加載自己的db檔&#xA;4. New : 支持轉換txt為db格式 (txt檔會保留)" HorizontalAlignment="Left" Margin="397.2,0,0,344" UseLayoutRounding="False" Width="336.8"/>
+        <Label x:Name="lb_tpd1" Content="1. New : 視窗不允許縮放&#xA;2. New : 練習可自訂次數&#xA;3. New : 進入點由 一般 改為 資料庫&#xA;4. New : 介面改版" HorizontalAlignment="Left" Margin="397.2,0,0,344" UseLayoutRounding="False" Width="336.8"/>
         <Label Content="更新：" HorizontalAlignment="Left" Margin="350,0,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>

@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -26,18 +25,24 @@ namespace 一丙英文背起來
         {
             ini.IniWriteValue("Setting", "rb_Answer_Eng", "True", IniFileName);
             ini.IniWriteValue("Setting", "rb_Order", "True", IniFileName);
+            ini.IniWriteValue("Setting", "tb_Again_times", "3", IniFileName);
+            ini.IniWriteValue("Setting", "cb_FileCovert", "False", IniFileName);
         }
 
         private static void ReadSetting()
         {
             App.Set_rb_Answer_Eng = ini.IniReadValue("Setting", "rb_Answer_Eng", IniFileName);
             App.Set_rb_Order = ini.IniReadValue("Setting", "rb_Order", IniFileName);
+            App.Set_tb_Again_times = ini.IniReadValue("Setting", "tb_Again_times", IniFileName);
+            App.Set_cb_FileCovert = ini.IniReadValue("Setting", "cb_FileCovert", IniFileName);
         }
 
         public static void SaveSetting()
         {
             ini.IniWriteValue("Setting", "rb_Answer_Eng", App.Set_rb_Answer_Eng, IniFileName);
             ini.IniWriteValue("Setting", "rb_Order", App.Set_rb_Order, IniFileName);
+            ini.IniWriteValue("Setting", "tb_Again_times", App.Set_tb_Again_times, IniFileName);
+            ini.IniWriteValue("Setting", "cb_FileCovert", App.Set_cb_FileCovert, IniFileName);
         }
 
         public class SetupIniIP
