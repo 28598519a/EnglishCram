@@ -35,6 +35,7 @@ namespace 一丙英文背起來
         private void Load_res_list(string fileText)
         {
             App.LRC.Clear();
+            lv_res_list.ItemsSource = null;
 
             try
             {
@@ -70,8 +71,6 @@ namespace 一丙英文背起來
 
         private void btn_load_res_list_Click(object sender, RoutedEventArgs e)
         {
-            App.LRC.Clear();
-
             /* 開啟選擇檔案視窗 */
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
             openFileDialog.InitialDirectory = App.Root;
@@ -104,8 +103,7 @@ namespace 一丙英文背起來
                 btn_test_start.Visibility = Visibility.Hidden;
                 btn_test_stop.Visibility = Visibility.Visible;
 
-                tb_Answer.IsEnabled = true;
-                btn_Answer.IsEnabled = true;
+                App.Control.Test(true);
 
                 List<int> listLinq = new List<int>(Enumerable.Range(0, App.LRC.Count));
 
@@ -113,12 +111,12 @@ namespace 一丙英文背起來
                 {
                     if (rb_Order.IsChecked == true)
                     {
-                        App.ResultList = listLinq.OrderBy(o => o);
+                        App.ResultList = listLinq.OrderBy(o => o).ToList();
                     }
                     else if (rb_Random.IsChecked == true)
                     {
-                        Random GetRandomInt = new Random();
-                        App.ResultList = listLinq.OrderBy(o => GetRandomInt.Next());
+                        Random GetRandomInt = new Random(Guid.NewGuid().GetHashCode());
+                        App.ResultList = listLinq.OrderBy(o => GetRandomInt.Next()).ToList();
                     }
 
                     NewQuestion();
@@ -145,7 +143,7 @@ namespace 一丙英文背起來
         {
             if (rb_Answer_Eng.IsChecked == true)
             {
-                if (tb_Answer.Text == App.LRC[App.ResultList.ToList()[App.Index]].NameEng)
+                if (tb_Answer.Text.ToLower() == App.LRC[App.ResultList[App.Index]].NameEng.ToLower())
                 {
                     App.Control.ClearText();
                     lb_AnswerCheck.Content = "正確!";
@@ -161,7 +159,7 @@ namespace 一丙英文背起來
             }
             else if (rb_Answer_Cht.IsChecked == true)
             {
-                if (tb_Answer.Text == App.LRC[App.ResultList.ToList()[App.Index]].NameCht)
+                if (tb_Answer.Text == App.LRC[App.ResultList[App.Index]].NameCht)
                 {
                     App.Control.ClearText();
                     lb_AnswerCheck.Content = "正確!";
@@ -171,7 +169,7 @@ namespace 一丙英文背起來
                 else
                 {
                     App.Control.Test(false);
-                    lb_AnswerCheck.Content = "錯誤!" + Environment.NewLine + "正確答案為 " + App.LRC[App.ResultList.ToList()[App.Index]].NameCht;
+                    lb_AnswerCheck.Content = "錯誤!" + Environment.NewLine + "正確答案為 " + App.LRC[App.ResultList[App.Index]].NameCht;
                 }
             }
         }
@@ -180,7 +178,7 @@ namespace 一丙英文背起來
         {
             if (rb_Answer_Eng.IsChecked == true)
             {
-                if (tb_Again1.Text == App.LRC[App.ResultList.ToList()[App.Index]].NameEng)
+                if (tb_Again1.Text.ToLower() == App.LRC[App.ResultList[App.Index]].NameEng.ToLower())
                 {
                     App.Control.Again1(false);
                 }
@@ -191,7 +189,7 @@ namespace 一丙英文背起來
             }
             else if (rb_Answer_Cht.IsChecked == true)
             {
-                if (tb_Again1.Text == App.LRC[App.ResultList.ToList()[App.Index]].NameCht)
+                if (tb_Again1.Text == App.LRC[App.ResultList[App.Index]].NameCht)
                 {
                     App.Control.Again1(false);
                 }
@@ -206,7 +204,7 @@ namespace 一丙英文背起來
         {
             if (rb_Answer_Eng.IsChecked == true)
             {
-                if (tb_Again2.Text == App.LRC[App.ResultList.ToList()[App.Index]].NameEng)
+                if (tb_Again2.Text.ToLower() == App.LRC[App.ResultList[App.Index]].NameEng.ToLower())
                 {
                     App.Control.Again2(false);
                 }
@@ -217,7 +215,7 @@ namespace 一丙英文背起來
             }
             else if (rb_Answer_Cht.IsChecked == true)
             {
-                if (tb_Again1.Text == App.LRC[App.ResultList.ToList()[App.Index]].NameCht)
+                if (tb_Again1.Text.ToLower() == App.LRC[App.ResultList[App.Index]].NameCht.ToLower())
                 {
                     App.Control.Again2(false);
                 }
@@ -232,7 +230,7 @@ namespace 一丙英文背起來
         {
             if (rb_Answer_Eng.IsChecked == true)
             {
-                if (tb_Again3.Text == App.LRC[App.ResultList.ToList()[App.Index]].NameEng)
+                if (tb_Again3.Text.ToLower() == App.LRC[App.ResultList[App.Index]].NameEng.ToLower())
                 {
                     App.Control.Again3(false);
                     App.Control.ClearText();
@@ -247,7 +245,7 @@ namespace 一丙英文背起來
             }
             else if (rb_Answer_Cht.IsChecked == true)
             {
-                if (tb_Again1.Text == App.LRC[App.ResultList.ToList()[App.Index]].NameCht)
+                if (tb_Again1.Text == App.LRC[App.ResultList[App.Index]].NameCht)
                 {
                     App.Control.Again3(false);
                     App.Control.ClearText();

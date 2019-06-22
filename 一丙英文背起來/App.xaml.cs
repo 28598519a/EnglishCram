@@ -12,7 +12,7 @@ namespace 一丙英文背起來
     {
         public static string Root = Environment.CurrentDirectory;
         public static int Index = 0;
-        public static IOrderedEnumerable<int> ResultList;
+        public static List<int> ResultList;
         public static List<ResCless> LRC = new List<ResCless>();
 
         public static class Control
