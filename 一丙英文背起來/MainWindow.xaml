@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:一丙英文背起來"
         mc:Ignorable="d"
-        Title="一丙英文背起來 ( Ver 0.4Beta )" Height="450" Width="750" Closed="Window_Closed" ResizeMode="CanMinimize">
+        Title="一丙英文背起來 ( Ver 0.5Beta )" Height="450" Width="750" Closed="Window_Closed" ResizeMode="CanMinimize">
     <Grid>
         <Label Content="開發者：" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top"/>
         <Label x:Name="lb_tpd" Content="107360715 (劃破黑夜)" HorizontalAlignment="Left" Margin="58,0,0,0" VerticalAlignment="Top"/>
@@ -60,7 +60,7 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <Label x:Name="lb_tpd1" Content="1. New : 視窗不允許縮放&#xA;2. New : 練習可自訂次數&#xA;3. New : 進入點由 一般 改為 資料庫&#xA;4. New : 介面改版" HorizontalAlignment="Left" Margin="397.2,0,0,344" UseLayoutRounding="False" Width="336.8"/>
+        <Label x:Name="lb_tpd1" Content="1. BugFixes : 跑完一輪題庫後會閃退&#xA;2. BugFixes : 隨機跑完一輪題庫後順序與前次相同&#xA;3. New : 導入題庫增加Excel(*.xlsx;*.xls)格式支援" HorizontalAlignment="Left" Margin="397.2,0,0,344" UseLayoutRounding="False" Width="336.8"/>
         <Label Content="更新：" HorizontalAlignment="Left" Margin="350,0,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>

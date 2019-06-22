@@ -51,25 +51,19 @@ namespace 一丙英文背起來
             LoadSetting.SaveSetting();
         }
 
-        private void NewQuestion()
-        {
-            if (rb_Answer_Eng.IsChecked == true)
-                lb_Question.Content = App.LRC[App.ResultList.ToList()[App.Index]].NameCht;
-            else lb_Question.Content = App.LRC[App.ResultList.ToList()[App.Index]].NameEng;
-        }
-
         private void Btn_load_res_list_Click(object sender, RoutedEventArgs e)
         {
             /* 開啟選擇檔案視窗 */
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
             openFileDialog.InitialDirectory = App.Root;
-            openFileDialog.Filter = "(*.txt;*.db)|*.txt;*.db";
+            openFileDialog.Filter = "(*.db;*.txt;*.xls;*.xlsx)|*.db;*.txt;*.xls;*.xlsx";
 
             if (openFileDialog.ShowDialog() == true)
             {
                 lb_Database_name.Content = Path.GetFileName(openFileDialog.FileName);
+                string FileExt = Path.GetExtension(openFileDialog.FileName);
 
-                if (Path.GetExtension(openFileDialog.FileName) == ".txt")
+                if (FileExt.Equals(".txt"))
                 {
                     Database.Load_res_list(File.ReadAllText(openFileDialog.FileName));
 
@@ -83,7 +77,7 @@ namespace 一丙英文背起來
                         }
                     }
                 }
-                else if (Path.GetExtension(openFileDialog.FileName) == ".db")
+                else if (FileExt.Equals(".db"))
                 {
                     try
                     {
@@ -94,6 +88,11 @@ namespace 一丙英文背起來
                     {
                         System.Windows.MessageBox.Show(ex.ToString());
                     }
+                }
+                else if (FileExt.Equals(".xls") || FileExt.Equals(".xlsx"))
+                {
+                    /* 注意: 執行之電腦必須有安裝Excel才能使用 */
+                    Database.Load_excel_list(openFileDialog.FileName);
                 }
             }
         }
@@ -136,7 +135,7 @@ namespace 一丙英文背起來
                         App.ResultList = listLinq.OrderBy(o => GetRandomInt.Next()).ToList();
                     }
 
-                    NewQuestion();
+                    Database.NewQuestion();
                 }
             }
             else
@@ -165,7 +164,7 @@ namespace 一丙英文背起來
                     Control.ClearText();
                     lb_AnswerCheck.Content = "正確!";
                     App.Index++;
-                    NewQuestion();
+                    Database.NewQuestion();
                 }
                 else
                 {
@@ -181,7 +180,7 @@ namespace 一丙英文背起來
                     Control.ClearText();
                     lb_AnswerCheck.Content = "正確!";
                     App.Index++;
-                    NewQuestion();
+                    Database.NewQuestion();
                 }
                 else
                 {
@@ -206,7 +205,7 @@ namespace 一丙英文背起來
                         if (App.Again_Count == Convert.ToInt32(tb_Again_times.Text))
                         {
                             Control.EndExercise();
-                            NewQuestion();
+                            Database.NewQuestion();
                         }
                     }
                 }
@@ -228,7 +227,7 @@ namespace 一丙英文背起來
                         if (App.Again_Count == Convert.ToInt32(tb_Again_times.Text))
                         {
                             Control.EndExercise();
-                            NewQuestion();
+                            Database.NewQuestion();
                         }
                     }
                 }

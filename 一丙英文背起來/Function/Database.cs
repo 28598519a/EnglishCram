@@ -1,11 +1,26 @@
 ﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
+using Excel = Microsoft.Office.Interop.Excel; //Define為Excel，以避免Application名稱衝突
 
 namespace 一丙英文背起來
 {
     public class Database
     {
+        public static void NewQuestion()
+        {
+            if (App.Index >= App.ResultList.Count)
+            {
+                App.Index = 0;
+                Random GetRandomInt = new Random(Guid.NewGuid().GetHashCode());
+                App.ResultList = App.ResultList.OrderBy(o => GetRandomInt.Next()).ToList();
+            }
+            if (((MainWindow)Application.Current.MainWindow).rb_Answer_Eng.IsChecked == true)
+                ((MainWindow)Application.Current.MainWindow).lb_Question.Content = App.LRC[App.ResultList.ToList()[App.Index]].NameCht;
+            else ((MainWindow)Application.Current.MainWindow).lb_Question.Content = App.LRC[App.ResultList.ToList()[App.Index]].NameEng;
+        }
+
         public static string CleanInput(string strIn)
         {
             /* \W 匹配任何非文字字元 (亦可用^\w) */
@@ -57,9 +72,62 @@ namespace 一丙英文背起來
             }
         }
 
-        public static void Make_res_list(string fileText)
+        public static void Load_excel_list(string filePath)
         {
+            App.LRC.Clear();
+            ((MainWindow)Application.Current.MainWindow).lv_res_list.ItemsSource = null;
 
+            Excel.Application SrcExcelApp = new Excel.Application();
+            SrcExcelApp.Visible = false;
+
+            Excel.Workbook SrcWorkBook = null;
+            Excel.Worksheet SrcWorksheet = null;
+            Excel.Range SrcRange = null;
+
+            try
+            {
+                /*
+                 * 開啟excel檔
+                 * 指定活頁簿,代表Sheet1
+                 * 取得有值的範圍
+                 */
+                SrcWorkBook = SrcExcelApp.Workbooks.Open(filePath);
+                SrcWorksheet = (Excel.Worksheet)SrcWorkBook.Sheets[1];
+                SrcRange = SrcWorksheet.UsedRange;
+
+                int count = 0,i = 0;
+                foreach (Excel.Range item in SrcRange)
+                {
+                    if (count % 2 == 0)
+                    {
+                        App.LRC.Add(new ResCless { NameCht = item.Cells.Text, NameEng = "" });
+                    }
+                    else if (count % 2 == 1)
+                    {
+                        App.LRC[i].NameEng = item.Cells.Text;
+                        i++;
+                    }
+                    count++;
+                }
+                ((MainWindow)Application.Current.MainWindow).lv_res_list.ItemsSource = App.LRC;
+                ((MainWindow)Application.Current.MainWindow).lb_lsCount.Content = App.LRC.Count;
+            }
+            catch(Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message.ToString());
+            }
+            finally
+            {
+                /*
+                 * 關閉Excel活頁簿
+                 * 關閉Excel
+                 * 釋放Excel資源 
+                 */
+                SrcWorkBook.Close();
+                SrcWorkBook = null;
+                SrcExcelApp.Quit();
+                System.Runtime.InteropServices.Marshal.FinalReleaseComObject(SrcExcelApp);
+            }
         }
     }
 }
