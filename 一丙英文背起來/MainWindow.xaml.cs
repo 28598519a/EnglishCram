@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Windows;
+using System.Windows.Input;
 
 namespace 一丙英文背起來
 {
@@ -17,26 +18,36 @@ namespace 一丙英文背起來
             WindowStartupLocation = WindowStartupLocation.CenterScreen; //居中顯示
 
             LoadSetting.Init_Setting(); //讀取設定
+            tb_Again_times.Text = App.Set_tb_Again_times;
+            if (App.Set_rb_FileCovertExt.Equals(".xlsx"))
+            {
+                rb_fmt_xlsx.IsChecked = true;
+            }
+            else if (App.Set_rb_FileCovertExt.Equals(".txt"))
+            {
+                rb_fmt_txt.IsChecked = true;
+            }
             try
             {
-                tb_Again_times.Text = App.Set_tb_Again_times;
                 cb_FileCovert.IsChecked = Convert.ToBoolean(App.Set_cb_FileCovert);
 
                 if (Convert.ToBoolean(App.Set_rb_Answer_Eng) != true)
                 {
-                    rb_Answer_Eng.IsChecked = false;
                     rb_Answer_Cht.IsChecked = true;
                 }
                 if (Convert.ToBoolean(App.Set_rb_Order) != true)
                 {
-                    rb_Order.IsChecked = false;
                     rb_Random.IsChecked = true;
+                }
+                if (Convert.ToBoolean(App.Set_cb_AllowEnter) != true)
+                {
+                    cb_AllowEnter.IsChecked = false;
                 }
             }
             catch
             {
                 File.Delete(App.Root + "\\UserSetting.ini");
-                System.Windows.MessageBox.Show("設定讀取失敗" + Environment.NewLine + "執行設定初始化...", "異常");
+                System.Windows.MessageBox.Show("設定讀取失敗" + Environment.NewLine + "執行部分設定初始化...", "異常");
             }
         }
 
@@ -44,14 +55,27 @@ namespace 一丙英文背起來
         {
             App.Set_rb_Answer_Eng = rb_Answer_Eng.IsChecked.ToString();
             App.Set_rb_Order = rb_Order.IsChecked.ToString();
+            if (rb_fmt_xlsx.IsChecked == true)
+            {
+                App.Set_rb_FileCovertExt = ".xlxs";
+            }
+            else if (rb_fmt_txt.IsChecked == true)
+            {
+                App.Set_rb_FileCovertExt = ".txt";
+            }
+            else
+            {
+                App.Set_rb_FileCovertExt = ".db";
+            }
             App.Set_tb_Again_times = tb_Again_times.Text;
             App.Set_cb_FileCovert = cb_FileCovert.IsChecked.ToString();
+            App.Set_cb_AllowEnter = cb_AllowEnter.IsChecked.ToString();
 
             /* 結束程式時保存設定 */
             LoadSetting.SaveSetting();
         }
 
-        private void Btn_load_res_list_Click(object sender, RoutedEventArgs e)
+        private void Btn_Load_txt_list_Click(object sender, RoutedEventArgs e)
         {
             /* 開啟選擇檔案視窗 */
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
@@ -65,24 +89,14 @@ namespace 一丙英文背起來
 
                 if (FileExt.Equals(".txt"))
                 {
-                    Database.Load_res_list(File.ReadAllText(openFileDialog.FileName));
-
-                    if (cb_FileCovert.IsChecked == true)
-                    {
-                        File.WriteAllBytes(Path.GetFileNameWithoutExtension(openFileDialog.FileName) + ".db", GZip.Compress(File.ReadAllBytes(openFileDialog.FileName)));
-
-                        if (cb_FileCovert_delete.IsChecked == true)
-                        {
-                            File.Delete(openFileDialog.FileName);
-                        }
-                    }
+                    Database.Load.txt_list(File.ReadAllText(openFileDialog.FileName));
                 }
                 else if (FileExt.Equals(".db"))
                 {
                     try
                     {
                         var stream = new StreamReader(new MemoryStream(GZip.Decompress(File.ReadAllBytes(openFileDialog.FileName))));
-                        Database.Load_res_list(stream.ReadToEnd());
+                        Database.Load.txt_list(stream.ReadToEnd());
                     }
                     catch (Exception ex)
                     {
@@ -92,7 +106,31 @@ namespace 一丙英文背起來
                 else if (FileExt.Equals(".xls") || FileExt.Equals(".xlsx"))
                 {
                     /* 注意: 執行之電腦必須有安裝Excel才能使用 */
-                    Database.Load_excel_list(openFileDialog.FileName);
+                    Database.Load.excel_list(openFileDialog.FileName);
+                }
+
+                if (cb_FileCovert.IsChecked == true)
+                {
+                    string path = Path.GetDirectoryName(openFileDialog.FileName) + "\\" + Path.GetFileNameWithoutExtension(openFileDialog.FileName);
+
+                    if (rb_fmt_db.IsChecked == true)
+                    {
+                        Database.Save.As_db(path);
+                    }
+                    else if (rb_fmt_txt.IsChecked == true)
+                    {
+                        Database.Save.As_txt(path);
+                    }
+                    else if (rb_fmt_xlsx.IsChecked == true)
+                    {
+                        Database.Save.As_excel(path);
+                    }
+
+
+                    if (cb_FileCovert_delete.IsChecked == true)
+                    {
+                        File.Delete(openFileDialog.FileName);
+                    }
                 }
             }
         }
@@ -104,7 +142,7 @@ namespace 一丙英文背起來
             try
             {
                 var stream = new StreamReader(new MemoryStream(GZip.Decompress(File.ReadAllBytes("Database.db"))));
-                Database.Load_res_list(stream.ReadToEnd());
+                Database.Load.txt_list(stream.ReadToEnd());
             }
             catch (Exception ex)
             {
@@ -169,6 +207,7 @@ namespace 一丙英文背起來
                 else
                 {
                     lb_AnswerCheck.Content = "錯誤!" + Environment.NewLine + "正確答案為 " + App.LRC[App.ResultList.ToList()[App.Index]].NameEng;
+                    lb_Again_count.Content = App.Again_Count;
                     Control.Test(false);
                     Control.Again(true);
                 }
@@ -185,6 +224,7 @@ namespace 一丙英文背起來
                 else
                 {
                     Control.Test(false);
+                    lb_Again_count.Content = App.Again_Count;
                     lb_AnswerCheck.Content = "錯誤!" + Environment.NewLine + "正確答案為 " + App.LRC[App.ResultList[App.Index]].NameCht;
                 }
             }
@@ -247,6 +287,26 @@ namespace 一丙英文背起來
         {
             cb_FileCovert_delete.IsChecked = false;
             cb_FileCovert_delete.IsEnabled = false;
+        }
+
+        private void Tb_Answer_KeyDown(object sender, KeyEventArgs e)
+        {
+            //讀到輸入Enter 且 允許以Enter送出
+            if (e.Key == Key.Enter && cb_AllowEnter.IsChecked == true)
+            {
+                //模擬點擊 送出鍵
+                Btn_Answer_Click(sender, e);
+            }
+        }
+
+        private void Tb_Again_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            //讀到輸入Enter 且 允許以Enter送出
+            if (e.Key == Key.Enter && cb_AllowEnter.IsChecked == true)
+            {
+                //模擬點擊 送出鍵
+                Btn_Again_Click(sender, e);
+            }
         }
     }
 }

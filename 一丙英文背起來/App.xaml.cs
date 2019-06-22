@@ -17,7 +17,9 @@ namespace 一丙英文背起來
 
         public static string Set_rb_Answer_Eng = "True";
         public static string Set_rb_Order = "True";
+        public static string Set_rb_FileCovertExt = ".db";
         public static string Set_tb_Again_times = "3";
         public static string Set_cb_FileCovert = "False";
+        public static string Set_cb_AllowEnter = "true";
     }
 }

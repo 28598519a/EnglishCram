@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using Excel = Microsoft.Office.Interop.Excel; //Define為Excel，以避免Application名稱衝突
@@ -36,97 +38,181 @@ namespace 一丙英文背起來
             }
         }
 
-        public static void Load_res_list(string fileText)
+        public class Load
         {
-            App.LRC.Clear();
-            ((MainWindow)Application.Current.MainWindow).lv_res_list.ItemsSource = null;
-
-            try
+            public static void txt_list(string fileText)
             {
-                /* [^\"]+ 匹配任何除了 " 以外的字元 */
-                MatchCollection chtWords = Regex.Matches(fileText, "cht = \"[^\"]+\"");
-                MatchCollection engWords = Regex.Matches(fileText, "eng = \"[^\"]+\"");
+                App.LRC.Clear();
+                ((MainWindow)Application.Current.MainWindow).lv_res_list.ItemsSource = null;
 
-                foreach (Match mt in chtWords)
+                try
                 {
-                    string chtWordsName = mt.Value.Replace("cht = ", "").Trim('"');
-                    App.LRC.Add(new ResCless { NameCht = chtWordsName, NameEng = "" });
-                }
+                    /* [^\"]+ 匹配任何除了 " 以外的字元 */
+                    MatchCollection chtWords = Regex.Matches(fileText, "cht = \"[^\"]+\"");
+                    MatchCollection engWords = Regex.Matches(fileText, "eng = \"[^\"]+\"");
 
-                int i = 0;
-                foreach (Match mt in engWords)
+                    foreach (Match mt in chtWords)
+                    {
+                        string chtWordsName = mt.Value.Replace("cht = ", "").Trim('"');
+                        App.LRC.Add(new ResCless { NameCht = chtWordsName, NameEng = "" });
+                    }
+
+                    int i = 0;
+                    foreach (Match mt in engWords)
+                    {
+                        if (i > App.LRC.Count - 1)
+                            break;
+
+                        string engWordsName = mt.Value.Replace("eng = ", "").Trim('"');
+                        App.LRC[i].NameEng = engWordsName;
+                        i++;
+                    }
+                    ((MainWindow)Application.Current.MainWindow).lv_res_list.ItemsSource = App.LRC;
+                    ((MainWindow)Application.Current.MainWindow).lb_lsCount.Content = App.LRC.Count;
+                }
+                catch (Exception ex)
                 {
-                    if (i > App.LRC.Count - 1)
-                        break;
-
-                    string engWordsName = mt.Value.Replace("eng = ", "").Trim('"');
-                    App.LRC[i].NameEng = engWordsName;
-                    i++;
+                    System.Windows.MessageBox.Show(ex.ToString());
                 }
-                ((MainWindow)Application.Current.MainWindow).lv_res_list.ItemsSource = App.LRC;
-                ((MainWindow)Application.Current.MainWindow).lb_lsCount.Content = App.LRC.Count;
             }
-            catch (Exception ex)
+
+            public static void excel_list(string filePath)
             {
-                System.Windows.MessageBox.Show(ex.ToString());
+                App.LRC.Clear();
+                ((MainWindow)Application.Current.MainWindow).lv_res_list.ItemsSource = null;
+
+                /* 呼叫Excel程式 且 不顯示 */
+                Excel.Application SrcExcelApp = new Excel.Application();
+                SrcExcelApp.Visible = false;
+
+                Excel.Workbook SrcWorkBook = null;
+                Excel.Worksheet SrcWorksheet = null;
+                Excel.Range SrcRange = null;
+
+                try
+                {
+                    /*
+                     * 開啟Excel檔
+                     * 指定活頁簿,代表Sheet1
+                     * 取得有值的範圍
+                     */
+                    SrcWorkBook = SrcExcelApp.Workbooks.Open(filePath);
+                    SrcWorksheet = (Excel.Worksheet)SrcWorkBook.Sheets[1];
+                    SrcRange = SrcWorksheet.UsedRange;
+
+                    int count = 0, i = 0;
+                    foreach (Excel.Range item in SrcRange)
+                    {
+                        if (count % 2 == 0)
+                        {
+                            App.LRC.Add(new ResCless { NameCht = item.Cells.Text, NameEng = "" });
+                        }
+                        else if (count % 2 == 1)
+                        {
+                            App.LRC[i].NameEng = item.Cells.Text;
+                            i++;
+                        }
+                        count++;
+                    }
+                    ((MainWindow)Application.Current.MainWindow).lv_res_list.ItemsSource = App.LRC;
+                    ((MainWindow)Application.Current.MainWindow).lb_lsCount.Content = App.LRC.Count;
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show(ex.Message.ToString());
+                }
+                finally
+                {
+                    /*
+                     * 關閉Excel活頁簿
+                     * 關閉Excel
+                     * 釋放Excel資源 ，並呼叫GC回收
+                     */
+                    SrcWorkBook.Close();
+                    SrcWorkBook = null;
+                    SrcExcelApp.Quit();
+                    System.Runtime.InteropServices.Marshal.FinalReleaseComObject(SrcExcelApp);
+                    GC.Collect();
+                }
             }
         }
 
-        public static void Load_excel_list(string filePath)
+        public class Save
         {
-            App.LRC.Clear();
-            ((MainWindow)Application.Current.MainWindow).lv_res_list.ItemsSource = null;
-
-            Excel.Application SrcExcelApp = new Excel.Application();
-            SrcExcelApp.Visible = false;
-
-            Excel.Workbook SrcWorkBook = null;
-            Excel.Worksheet SrcWorksheet = null;
-            Excel.Range SrcRange = null;
-
-            try
+            public static void As_db(string path)
             {
-                /*
-                 * 開啟excel檔
-                 * 指定活頁簿,代表Sheet1
-                 * 取得有值的範圍
-                 */
-                SrcWorkBook = SrcExcelApp.Workbooks.Open(filePath);
-                SrcWorksheet = (Excel.Worksheet)SrcWorkBook.Sheets[1];
-                SrcRange = SrcWorksheet.UsedRange;
+                byte[] List_bytes = Encoding.Unicode.GetBytes(LRC2txt());
+                File.WriteAllBytes(path + ".db", GZip.Compress(List_bytes));
+            }
 
-                int count = 0,i = 0;
-                foreach (Excel.Range item in SrcRange)
+            public static void As_txt(string path)
+            {
+                File.WriteAllText(path + ".txt",LRC2txt());
+            }
+
+            private static string LRC2txt()
+            {
+                string list = "";
+                for (int i = 0; i < App.LRC.Count; i++)
                 {
-                    if (count % 2 == 0)
-                    {
-                        App.LRC.Add(new ResCless { NameCht = item.Cells.Text, NameEng = "" });
-                    }
-                    else if (count % 2 == 1)
-                    {
-                        App.LRC[i].NameEng = item.Cells.Text;
-                        i++;
-                    }
-                    count++;
+                    list += "cht = \"" + App.LRC[i].NameCht + "\"" + Environment.NewLine + "eng = \"" + App.LRC[i].NameEng + "\"" + Environment.NewLine;
                 }
-                ((MainWindow)Application.Current.MainWindow).lv_res_list.ItemsSource = App.LRC;
-                ((MainWindow)Application.Current.MainWindow).lb_lsCount.Content = App.LRC.Count;
+                return list;
             }
-            catch(Exception ex)
+
+            public static void As_excel(string path)
             {
-                System.Windows.MessageBox.Show(ex.Message.ToString());
-            }
-            finally
-            {
-                /*
-                 * 關閉Excel活頁簿
-                 * 關閉Excel
-                 * 釋放Excel資源 
-                 */
-                SrcWorkBook.Close();
-                SrcWorkBook = null;
-                SrcExcelApp.Quit();
-                System.Runtime.InteropServices.Marshal.FinalReleaseComObject(SrcExcelApp);
+                /* 呼叫Excel程式 且 不顯示 */
+                Excel.Application SrcExcelApp = new Excel.Application();
+                SrcExcelApp.Visible = false;
+
+                Excel.Workbook SrcWorkBook = null;
+                Excel.Worksheet SrcWorksheet = new Excel.Worksheet();
+                Excel.Range SrcRange = null;
+
+                try
+                {
+                    /*
+                     * 產生Excel檔
+                     * 指定活頁簿,代表Sheet1
+                     */
+                    SrcWorkBook = SrcExcelApp.Workbooks.Add();
+                    SrcWorksheet = SrcWorkBook.Sheets[1];
+
+                    for (int i = 1; i <= App.LRC.Count; i++)
+                    {
+                        SrcExcelApp.Cells[i, 1] = App.LRC[i - 1].NameCht;
+                        SrcExcelApp.Cells[i, 2] = App.LRC[i - 1].NameEng;
+                    }
+
+                    /*
+                     * 取得有值的範圍
+                     * 自動調整列高
+                     * 自動調整欄寬
+                     */
+                    SrcRange = SrcWorksheet.UsedRange;
+                    SrcRange.EntireRow.AutoFit();
+                    SrcRange.EntireColumn.AutoFit();
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show(ex.Message.ToString());
+                }
+                finally
+                {
+                    /*
+                     * 儲存Excel檔 (副檔名由Excel版本判斷)
+                     * 關閉Excel活頁簿
+                     * 關閉Excel
+                     * 釋放Excel資源，並呼叫GC回收
+                     */
+                    SrcWorkBook.SaveAs(path);
+                    SrcWorkBook.Close();
+                    SrcWorkBook = null;
+                    SrcExcelApp.Quit();
+                    System.Runtime.InteropServices.Marshal.FinalReleaseComObject(SrcExcelApp);
+                    GC.Collect();
+                }
             }
         }
     }
