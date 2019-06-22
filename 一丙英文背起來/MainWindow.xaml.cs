@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using System.IO;
-using System.Text.RegularExpressions;
+using System.Windows;
 
 namespace 一丙英文背起來
 {
@@ -16,12 +15,34 @@ namespace 一丙英文背起來
         {
             InitializeComponent();
             WindowStartupLocation = WindowStartupLocation.CenterScreen; //居中顯示
-            LoadSetting.Init_Setting();
+
+            LoadSetting.Init_Setting(); //讀取設定
+            try
+            {
+                if (Convert.ToBoolean(App.Set_rb_Answer_Eng) != true)
+                {
+                    rb_Answer_Eng.IsChecked = false;
+                    rb_Answer_Cht.IsChecked = true;
+                }
+                if (Convert.ToBoolean(App.Set_rb_Order) != true)
+                {
+                    rb_Order.IsChecked = false;
+                    rb_Random.IsChecked = true;
+                }
+            }
+            catch
+            {
+                File.Delete(App.Root + "\\UserSetting.ini");
+                System.Windows.MessageBox.Show("設定讀取失敗" + Environment.NewLine + "執行設定初始化...", "異常");
+            }
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            /* 結束程式時保存DataBase */
+            App.Set_rb_Answer_Eng = rb_Answer_Eng.IsChecked.ToString();
+            App.Set_rb_Order = rb_Order.IsChecked.ToString();
+
+            /* 結束程式時保存設定 */
             LoadSetting.SaveSetting();
         }
 
@@ -32,63 +53,48 @@ namespace 一丙英文背起來
             else lb_Question.Content = App.LRC[App.ResultList.ToList()[App.Index]].NameEng;
         }
 
-        private void Load_res_list(string fileText)
-        {
-            App.LRC.Clear();
-            lv_res_list.ItemsSource = null;
-
-            try
-            {
-                //lb_dabaotimetxt.Content = Regex.Match(fileText, "daBaoTime = \"[^\"]+\"").Value.Replace("daBaoTime = ", "").Trim('"');
-
-                MatchCollection chtWords = Regex.Matches(fileText, "cht = \"[^\"]+\"");
-                MatchCollection engWords = Regex.Matches(fileText, "eng = \"[^\"]+\"");
-
-                foreach (Match mt in chtWords)
-                {
-                    string chtWordsName = mt.Value.Replace("cht = ", "").Trim('"');
-                    App.LRC.Add(new ResCless { NameCht = chtWordsName, NameEng = "" });
-                }
-
-                int i = 0;
-                foreach (Match mt in engWords)
-                {
-                    if (i > App.LRC.Count - 1)
-                        break;
-
-                    string engWordsName = mt.Value.Replace("eng = ", "").Trim('"');
-                    App.LRC[i].NameEng = engWordsName;
-                    i++;
-                }
-                lv_res_list.ItemsSource = App.LRC;
-                lb_lsCount.Content = App.LRC.Count;
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show(ex.ToString());
-            }
-        }
-
-        private void btn_load_res_list_Click(object sender, RoutedEventArgs e)
+        private void Btn_load_res_list_Click(object sender, RoutedEventArgs e)
         {
             /* 開啟選擇檔案視窗 */
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
             openFileDialog.InitialDirectory = App.Root;
+            openFileDialog.Filter = "(*.txt;*.db)|*.txt;*.db";
 
             if (openFileDialog.ShowDialog() == true)
             {
-                Load_res_list(File.ReadAllText(openFileDialog.FileName));
+                if (Path.GetExtension(openFileDialog.FileName) == ".txt")
+                {
+                    Database.Load_res_list(File.ReadAllText(openFileDialog.FileName));
+
+                    if (cb_FileCovert.IsChecked == true)
+                    {
+                        File.WriteAllBytes(Path.GetFileNameWithoutExtension(openFileDialog.FileName) + ".db", GZip.Compress(File.ReadAllBytes(openFileDialog.FileName)));
+                        //File.Delete(openFileDialog.FileName);
+                    }
+                }
+                else if (Path.GetExtension(openFileDialog.FileName) == ".db")
+                {
+                    try
+                    {
+                        var stream = new StreamReader(new MemoryStream(GZip.Decompress(File.ReadAllBytes(openFileDialog.FileName))));
+                        Database.Load_res_list(stream.ReadToEnd());
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Windows.MessageBox.Show(ex.ToString());
+                    }
+                }
             }
         }
 
-        private void btn_Default_db_Click(object sender, RoutedEventArgs e)
+        private void Btn_Default_db_Click(object sender, RoutedEventArgs e)
         {
             //File.WriteAllBytes("Database.db", GZip.Compress(File.ReadAllBytes("Database.db")));
             //File.WriteAllBytes("Database.txt", GZip.Decompress(File.ReadAllBytes("Database.db")));
             try
             {
                 var stream = new StreamReader(new MemoryStream(GZip.Decompress(File.ReadAllBytes("Database.db"))));
-                Load_res_list(stream.ReadToEnd());
+                Database.Load_res_list(stream.ReadToEnd());
             }
             catch (Exception ex)
             {
@@ -96,7 +102,7 @@ namespace 一丙英文背起來
             }
         }
 
-        private void btn_test_start_Click(object sender, RoutedEventArgs e)
+        private void Btn_test_start_Click(object sender, RoutedEventArgs e)
         {
             if (App.LRC.Count > 0)
             {
@@ -129,7 +135,7 @@ namespace 一丙英文背起來
             }
         }
 
-        private void btn_test_stop_Click(object sender, RoutedEventArgs e)
+        private void Btn_test_stop_Click(object sender, RoutedEventArgs e)
         {
             btn_test_start.Visibility = Visibility.Visible;
             btn_test_stop.Visibility = Visibility.Hidden;
@@ -139,11 +145,11 @@ namespace 一丙英文背起來
             App.Control.Test(false);
         }
 
-        private void btn_Answer_Click(object sender, RoutedEventArgs e)
+        private void Btn_Answer_Click(object sender, RoutedEventArgs e)
         {
             if (rb_Answer_Eng.IsChecked == true)
             {
-                if (tb_Answer.Text.ToLower() == App.LRC[App.ResultList[App.Index]].NameEng.ToLower())
+                if (Database.CleanInput(tb_Answer.Text.ToLower()) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameEng.ToLower()))
                 {
                     App.Control.ClearText();
                     lb_AnswerCheck.Content = "正確!";
@@ -159,7 +165,7 @@ namespace 一丙英文背起來
             }
             else if (rb_Answer_Cht.IsChecked == true)
             {
-                if (tb_Answer.Text == App.LRC[App.ResultList[App.Index]].NameCht)
+                if (Database.CleanInput(tb_Answer.Text) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameCht))
                 {
                     App.Control.ClearText();
                     lb_AnswerCheck.Content = "正確!";
@@ -174,11 +180,11 @@ namespace 一丙英文背起來
             }
         }
 
-        private void btn_Again1_Click(object sender, RoutedEventArgs e)
+        private void Btn_Again1_Click(object sender, RoutedEventArgs e)
         {
             if (rb_Answer_Eng.IsChecked == true)
             {
-                if (tb_Again1.Text.ToLower() == App.LRC[App.ResultList[App.Index]].NameEng.ToLower())
+                if (Database.CleanInput(tb_Again1.Text.ToLower()) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameEng.ToLower()))
                 {
                     App.Control.Again1(false);
                 }
@@ -189,7 +195,7 @@ namespace 一丙英文背起來
             }
             else if (rb_Answer_Cht.IsChecked == true)
             {
-                if (tb_Again1.Text == App.LRC[App.ResultList[App.Index]].NameCht)
+                if (Database.CleanInput(tb_Again1.Text) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameCht))
                 {
                     App.Control.Again1(false);
                 }
@@ -200,11 +206,11 @@ namespace 一丙英文背起來
             }            
         }
 
-        private void btn_Again2_Click(object sender, RoutedEventArgs e)
+        private void Btn_Again2_Click(object sender, RoutedEventArgs e)
         {
             if (rb_Answer_Eng.IsChecked == true)
             {
-                if (tb_Again2.Text.ToLower() == App.LRC[App.ResultList[App.Index]].NameEng.ToLower())
+                if (Database.CleanInput(tb_Again2.Text.ToLower()) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameEng.ToLower()))
                 {
                     App.Control.Again2(false);
                 }
@@ -215,7 +221,7 @@ namespace 一丙英文背起來
             }
             else if (rb_Answer_Cht.IsChecked == true)
             {
-                if (tb_Again1.Text.ToLower() == App.LRC[App.ResultList[App.Index]].NameCht.ToLower())
+                if (Database.CleanInput(tb_Again1.Text.ToLower()) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameCht.ToLower()))
                 {
                     App.Control.Again2(false);
                 }
@@ -226,11 +232,11 @@ namespace 一丙英文背起來
             }
         }
 
-        private void btn_Again3_Click(object sender, RoutedEventArgs e)
+        private void Btn_Again3_Click(object sender, RoutedEventArgs e)
         {
             if (rb_Answer_Eng.IsChecked == true)
             {
-                if (tb_Again3.Text.ToLower() == App.LRC[App.ResultList[App.Index]].NameEng.ToLower())
+                if (Database.CleanInput(tb_Again3.Text.ToLower()) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameEng.ToLower()))
                 {
                     App.Control.Again3(false);
                     App.Control.ClearText();
@@ -245,7 +251,7 @@ namespace 一丙英文背起來
             }
             else if (rb_Answer_Cht.IsChecked == true)
             {
-                if (tb_Again1.Text == App.LRC[App.ResultList[App.Index]].NameCht)
+                if (Database.CleanInput(tb_Again1.Text) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameCht))
                 {
                     App.Control.Again3(false);
                     App.Control.ClearText();

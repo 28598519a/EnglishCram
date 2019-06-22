@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 
 namespace 一丙英文背起來
@@ -14,6 +13,9 @@ namespace 一丙英文背起來
         public static int Index = 0;
         public static List<int> ResultList;
         public static List<ResCless> LRC = new List<ResCless>();
+
+        public static string Set_rb_Answer_Eng = "True";
+        public static string Set_rb_Order = "True";
 
         public static class Control
         {
