@@ -72,7 +72,7 @@ namespace 一丙英文背起來
                 }
                 catch (Exception ex)
                 {
-                    System.Windows.MessageBox.Show(ex.ToString());
+                    System.Windows.MessageBox.Show(ex.Message.ToString());
                 }
             }
 

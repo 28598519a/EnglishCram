@@ -100,7 +100,7 @@ namespace 一丙英文背起來
                     }
                     catch (Exception ex)
                     {
-                        System.Windows.MessageBox.Show(ex.ToString());
+                        System.Windows.MessageBox.Show(ex.Message.ToString());
                     }
                 }
                 else if (FileExt.Equals(".xls") || FileExt.Equals(".xlsx"))
@@ -126,7 +126,6 @@ namespace 一丙英文背起來
                         Database.Save.As_excel(path);
                     }
 
-
                     if (cb_FileCovert_delete.IsChecked == true)
                     {
                         File.Delete(openFileDialog.FileName);
@@ -137,16 +136,24 @@ namespace 一丙英文背起來
 
         private void Btn_Default_db_Click(object sender, RoutedEventArgs e)
         {
-            lb_Database_name.Content = "Database.db";
+            string DefaultFileName = "Default.db";
 
-            try
+            if (File.Exists(DefaultFileName))
             {
-                var stream = new StreamReader(new MemoryStream(GZip.Decompress(File.ReadAllBytes("Database.db"))));
-                Database.Load.txt_list(stream.ReadToEnd());
+                lb_Database_name.Content = DefaultFileName;
+                try
+                {
+                    var stream = new StreamReader(new MemoryStream(GZip.Decompress(File.ReadAllBytes(DefaultFileName))));
+                    Database.Load.txt_list(stream.ReadToEnd());
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show(ex.Message.ToString());
+                }
             }
-            catch (Exception ex)
+            else
             {
-                System.Windows.MessageBox.Show(ex.ToString());
+                System.Windows.MessageBox.Show("找不到" + DefaultFileName, "提示");
             }
         }
 
@@ -158,6 +165,7 @@ namespace 一丙英文背起來
                 btn_test_stop.Visibility = Visibility.Visible;
 
                 Control.Test(true);
+                tb_Answer.Focus();
 
                 List<int> listLinq = new List<int>(Enumerable.Range(0, App.LRC.Count));
 
@@ -195,6 +203,8 @@ namespace 一丙英文背起來
 
         private void Btn_Answer_Click(object sender, RoutedEventArgs e)
         {
+            tb_Answer.Focus();
+
             if (rb_Answer_Eng.IsChecked == true)
             {
                 if (Database.CleanInput(tb_Answer.Text.ToLower()) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameEng.ToLower()))
@@ -210,6 +220,7 @@ namespace 一丙英文背起來
                     lb_Again_count.Content = App.Again_Count;
                     Control.Test(false);
                     Control.Again(true);
+                    tb_Again.Focus();
                 }
             }
             else if (rb_Answer_Cht.IsChecked == true)
@@ -226,26 +237,41 @@ namespace 一丙英文背起來
                     Control.Test(false);
                     lb_Again_count.Content = App.Again_Count;
                     lb_AnswerCheck.Content = "錯誤!" + Environment.NewLine + "正確答案為 " + App.LRC[App.ResultList[App.Index]].NameCht;
+                    tb_Again.Focus();
                 }
             }
         }
 
         private void Btn_Again_Click(object sender, RoutedEventArgs e)
         {
+            tb_Again.Focus();
+
+            int AgainTimes = 3;
+            try
+            {
+                AgainTimes = Convert.ToInt32(tb_Again_times.Text);
+            }
+            catch(Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message.ToString());
+                tb_Again_times.Text = "3";
+            }
+
             if (rb_Answer_Eng.IsChecked == true)
             {
                 if (Database.CleanInput(tb_Again.Text.ToLower()) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameEng.ToLower()))
                 {
-                    if (App.Again_Count < Convert.ToInt32(tb_Again_times.Text))
+                    if (App.Again_Count < AgainTimes)
                     {
                         App.Again_Count++;
                         lb_Again_count.Content = App.Again_Count;
                         tb_Again.Text = "";
 
-                        if (App.Again_Count == Convert.ToInt32(tb_Again_times.Text))
+                        if (App.Again_Count == AgainTimes)
                         {
                             Control.EndExercise();
                             Database.NewQuestion();
+                            tb_Answer.Focus();
                         }
                     }
                 }
@@ -258,16 +284,17 @@ namespace 一丙英文背起來
             {
                 if (Database.CleanInput(tb_Again.Text) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameCht))
                 {
-                    if (App.Again_Count < Convert.ToInt32(tb_Again_times.Text))
+                    if (App.Again_Count < AgainTimes)
                     {
                         App.Again_Count++;
                         lb_Again_count.Content = App.Again_Count;
                         tb_Again.Text = "";
 
-                        if (App.Again_Count == Convert.ToInt32(tb_Again_times.Text))
+                        if (App.Again_Count == AgainTimes)
                         {
                             Control.EndExercise();
                             Database.NewQuestion();
+                            tb_Answer.Focus();
                         }
                     }
                 }
@@ -275,7 +302,7 @@ namespace 一丙英文背起來
                 {
                     tb_Again.Text = "";
                 }
-            }            
+            }
         }
 
         private void Cb_FileCovert_Checked(object sender, RoutedEventArgs e)

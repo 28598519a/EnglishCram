@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:一丙英文背起來"
         mc:Ignorable="d"
-        Title="一丙英文背起來 ( Ver 0.6Beta )" Height="450" Width="750" Closed="Window_Closed">
+        Title="一丙英文背起來 ( Ver 0.7Beta )" Height="450" Width="750" Closed="Window_Closed">
     <Viewbox x:Name="ScreenAdaptive" Stretch="Fill">
         <Grid>
             <Label Content="開發者：" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top"/>
             <Label x:Name="lb_tpd" Content="107360715 (劃破黑夜)" HorizontalAlignment="Left" Margin="58,0,0,0" VerticalAlignment="Top"/>
             <Label Content="更新：" HorizontalAlignment="Left" Margin="350,0,0,0" VerticalAlignment="Top"/>
-            <Label x:Name="lb_tpd1" Content="1. BugFixes : 開始新練習時，計數器顯示沒歸零&#xA;2. New : 支援3種題庫格式互相轉換&#xA;3. New : 支持以Enter鍵送出&#xA;4. New : 支持視窗縮放 ( 所有物件會跟著縮放 )" HorizontalAlignment="Left" Margin="397,0,0,0" VerticalAlignment="Top"/>
+            <Label x:Name="lb_tpd1" Content="1. BugFixes : 練習次數輸入非數字程式會閃退&#xA;2. New : 優化了異常提示內容&#xA;3. New : 測驗與練習切換時會進入等待輸入狀態&#xA;4. New : 按送出鍵會進入等待輸入狀態" HorizontalAlignment="Left" Margin="397,0,0,0" VerticalAlignment="Top"/>
 
             <TabControl x:Name="tbc_main" Height="344" Margin="0,76,0,0" VerticalAlignment="Top" SelectedIndex="1" HorizontalAlignment="Left" Width="742" >
                 <TabItem Header="一般" Width="80">
