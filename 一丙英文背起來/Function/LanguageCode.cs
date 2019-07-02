@@ -74,49 +74,49 @@
             hu, // Hungarian
             hy, // Armenian
 
-            ia, //Interlingua
-            ie, //Interlingue
-            ik, //Inupiak
-            it, //Italian
-            iw, //Hebrew
+            ia, // Interlingua
+            ie, // Interlingue
+            ik, // Inupiak
+            it, // Italian
+            iw, // Hebrew
 
-            ja, //Japanese
-            ji, //Yiddish
-            jw, //Javanese
+            ja, // Japanese
+            ji, // Yiddish
+            jw, // Javanese
 
-            ka, //Georgian
-            kk, //Kazakh
-            kl, //Greenlandic
-            km, //Cambodian
-            kn, //Kannada
-            ko, //Korean
-            ks, //Kashmiri
-            ku, //Kurdish
-            ky, //Kirghiz
+            ka, // Georgian
+            kk, // Kazakh
+            kl, // Greenlandic
+            km, // Cambodian
+            kn, // Kannada
+            ko, // Korean
+            ks, // Kashmiri
+            ku, // Kurdish
+            ky, // Kirghiz
 
-            la, //Latin
-            ln, //Lingala
-            lo, //Laothian
-            lt, //Lithuanian
-            lv, //Latvian, Lettish
+            la, // Latin
+            ln, // Lingala
+            lo, // Laothian
+            lt, // Lithuanian
+            lv, // Latvian, Lettish
 
-            mg, //Malagasy
-            mi, //Maori
-            mk, //Macedonian
-            ml, //Malayalam
-            mn, //Mongolian
-            mo, //Moldavian
-            mr, //Marathi
-            ms, //Malay
-            mt, //Maltese
-            my, //Burmese
+            mg, // Malagasy
+            mi, // Maori
+            mk, // Macedonian
+            ml, // Malayalam
+            mn, // Mongolian
+            mo, // Moldavian
+            mr, // Marathi
+            ms, // Malay
+            mt, // Maltese
+            my, // Burmese
 
-            na, //Nauru
-            ne, //Nepali
-            nl, //Dutch
-            no, //Norwegian
+            na, // Nauru
+            ne, // Nepali
+            nl, // Dutch
+            no, // Norwegian
 
-            oc, //Occitan
+            oc, // Occitan
             om, // Oromo
             or, // Oriya
 

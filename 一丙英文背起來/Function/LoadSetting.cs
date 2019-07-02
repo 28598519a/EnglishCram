@@ -7,7 +7,7 @@ namespace 一丙英文背起來
 {
     public class LoadSetting
     {
-        public static SetupIniIP ini = new SetupIniIP();
+        private static SetupIniIP ini = new SetupIniIP();
         public static string IniFileName = "UserSetting.ini";
 
         /// <summary>
@@ -68,10 +68,8 @@ namespace 一丙英文背起來
             ini.IniWriteValue("Setting", "cb_pfclim", App.Set_cb_pfclim, IniFileName);
         }
 
-        public class SetupIniIP
+        private class SetupIniIP
         {
-            public string path;
-
             [SuppressUnmanagedCodeSecurity]
             internal static class SafeNativeMethods
             {
@@ -84,11 +82,25 @@ namespace 一丙英文背起來
 
             }
 
+            /// <summary>
+            /// ini寫值
+            /// </summary>
+            /// <param name="Section">集合</param>
+            /// <param name="Key">索引</param>
+            /// <param name="Value">值</param>
+            /// <param name="inipath">ini路徑</param>
             public void IniWriteValue(string Section, string Key, string Value, string inipath)
             {
                 SafeNativeMethods.WritePrivateProfileString(Section, Key, Value, App.Root + "\\" + inipath);
             }
 
+            /// <summary>
+            /// ini讀值
+            /// </summary>
+            /// <param name="Section">集合</param>
+            /// <param name="Key">索引</param>
+            /// <param name="inipath">ini路徑</param>
+            /// <returns>ini值</returns>
             public string IniReadValue(string Section, string Key, string inipath)
             {
                 StringBuilder temp = new StringBuilder(255);

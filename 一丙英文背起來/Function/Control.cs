@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Timers;
 using System.Windows;
 
 namespace 一丙英文背起來
@@ -123,7 +124,7 @@ namespace 一丙英文背起來
         /// <param name="second">秒數</param>
         public static void ShowAutoClosingMessageBox(string message, string caption = "通知", double second = 3)
         {
-            var timer = new System.Timers.Timer(second * 1000) { AutoReset = false };
+            Timer timer = new System.Timers.Timer(second * 1000) { AutoReset = false };
             // timer觸發時，關閉指定標題之視窗
             timer.Elapsed += delegate
             {

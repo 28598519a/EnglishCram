@@ -63,6 +63,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -82,7 +83,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Function\GoogleKeyTokenGenerator.cs" />
+    <Compile Include="Function\Database\Load.cs" />
+    <Compile Include="Function\Database\Question.cs" />
+    <Compile Include="Function\GoogleTranslateToken\TokenKeyParseException.cs" />
+    <Compile Include="Function\GoogleTranslateToken\GoogleKeyTokenGenerator.cs" />
+    <Compile Include="Function\GoogleTranslateToken\GoogleTranslateIPBannedException.cs" />
     <Compile Include="Function\LanguageCode.cs" />
     <Compile Include="Function\MP3Player.cs" />
     <Compile Include="SubWindow\UpdateWindow.xaml.cs">
@@ -100,9 +105,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Function\Control.cs" />
-    <Compile Include="Function\GZip.cs" />
+    <Compile Include="Function\Compress\GZip.cs" />
     <Compile Include="Function\LoadSetting.cs" />
-    <Compile Include="Function\Database.cs" />
+    <Compile Include="Function\Database\Save.cs" />
     <Compile Include="Function\ResCless.cs" />
     <Compile Include="Function\WebServices.cs" />
     <Compile Include="MainWindow.xaml.cs">

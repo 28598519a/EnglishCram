@@ -120,7 +120,7 @@ namespace 一丙英文背起來
                     try
                     {
                         // db副檔名的題庫要先用GZIP解壓，再讀取TEXT內容
-                        StreamReader stream = new StreamReader(new MemoryStream(GZip.Decompress(File.ReadAllBytes(App.FileRoot))));
+                        StreamReader stream = new StreamReader(new MemoryStream(Compress.GZip.Decompress(File.ReadAllBytes(App.FileRoot))));
                         Database.Load.txt_list(stream.ReadToEnd());
                     }
                     catch (Exception ex)
@@ -188,7 +188,7 @@ namespace 一丙英文背起來
                 try
                 {
                     // db副檔名的題庫要先用GZIP解壓，再讀取TEXT內容
-                    var stream = new StreamReader(new MemoryStream(GZip.Decompress(File.ReadAllBytes(DefaultFileName))));
+                    var stream = new StreamReader(new MemoryStream(Compress.GZip.Decompress(File.ReadAllBytes(DefaultFileName))));
                     Database.Load.txt_list(stream.ReadToEnd());
                 }
                 catch (Exception ex)
@@ -499,7 +499,7 @@ namespace 一丙英文背起來
         {
             for ( int i = 0; i < App.LRC.Count; i++)
             {
-                App.LRC[App.ResultList[App.Index]].Proficiency = 0;
+                App.LRC[i].Proficiency = 0;
             }
             Control.Set_Lv_res_list();
         }

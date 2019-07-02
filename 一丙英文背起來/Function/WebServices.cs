@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -100,9 +101,9 @@ namespace 一丙英文背起來
         /// <param name="downPath">下載網址</param>
         /// <param name="saveFolder">保存的目錄</param>
         /// <param name="overWrite">覆寫</param>
-        public static void DownLoadFile(string downPath, string saveFolder, bool overWrite = false)
+        public static string DownLoadFile(string downPath, string saveFolder, bool overWrite = false)
         {
-            DownLoadFile(downPath, saveFolder, null, overWrite);
+            return DownLoadFile(downPath, saveFolder, String.Empty, overWrite);
         }
 
         /// <summary>
@@ -112,12 +113,13 @@ namespace 一丙英文背起來
         /// <param name="saveFolder">保存的目錄</param>
         /// <param name="saveName">自訂檔名</param>
         /// <param name="overWrite">覆寫</param>
-        public static void DownLoadFile(string downPath, string saveFolder, string saveName, bool overWrite = false)
+        public static string DownLoadFile(string downPath, string saveFolder, string saveName, bool overWrite = false)
         {
             string savePath;
-            if (saveName.Equals(null))
+            string downfilename = GetDownFileName(downPath);
+            if (saveName.Equals(String.Empty))
             {
-                savePath = Path.Combine(saveFolder, GetDownFileName(downPath));
+                savePath = Path.Combine(saveFolder, downfilename);
             }
             else
             {
@@ -128,7 +130,7 @@ namespace 一丙英文背起來
                 Directory.CreateDirectory(Path.GetDirectoryName(savePath));
 
             if (File.Exists(savePath) && overWrite == false)
-                return;
+                return String.Empty;
 
             using (WebClient wc = new WebClient())
             {
@@ -141,6 +143,7 @@ namespace 一丙英文背起來
                     System.Windows.MessageBox.Show(ex.Message.ToString());
                 }
             }
+            return downfilename;
         }
 
         /// <summary>
@@ -152,7 +155,7 @@ namespace 一丙英文背起來
         {
             using (WebClient wc = new WebClient())
             {
-                using (var stream = wc.OpenRead(downPath))
+                using (Stream stream = wc.OpenRead(downPath))
                 {
                     //若伺服器未提供檔名，預設以下載時間產生檔名
                     string fn = DateTime.Now.ToString("yyyyMMddHHmmss") + ".data";
@@ -188,12 +191,12 @@ namespace 一丙英文背起來
         /// <returns>解密資料</returns>
         private static IEnumerable<byte> GetDecodedBytes(string encData)
         {
-            var encChars = encData.ToCharArray();
+            char[] encChars = encData.ToCharArray();
             for (int i = 0; i < encChars.Length; i++)
             {
                 if (encChars[i] == '%')
                 {
-                    var hexString = new string(encChars, i + 1, 2);
+                    string hexString = new string(encChars, i + 1, 2);
 
                     i += 2;
 
@@ -220,7 +223,7 @@ namespace 一丙英文背起來
             if (m.Success)
             {
                 //注意 : 此處未包含伺服器傳回資料有誤之容錯處理
-                var enc = Encoding.GetEncoding(m.Groups["e"].Value);
+                Encoding enc = Encoding.GetEncoding(m.Groups["e"].Value);
                 return enc.GetString(GetDecodedBytes(m.Groups["d"].Value).ToArray());
             }
             return encStr;
@@ -251,9 +254,7 @@ namespace 一丙英文背起來
         /// <returns>語音URL</returns>
         public static string GoogleTransVoiceUrl(string Text, LanguageCode.CommonCode languageCode = LanguageCode.CommonCode.en)
         {
-            // 計算Google語音的tk驗證參數
-            GoogleTranslateToken.GoogleKeyTokenGenerator generator = new GoogleTranslateToken.GoogleKeyTokenGenerator();
-            string token = generator.Generate(Text);
+            string token = GetTokenAsync(Text).GetAwaiter().GetResult();
              
             string TTSVoice = "https://translate.google.com/translate_tts?";
             TTSVoice += "&ie=UTF-8";               // 輸入編碼
@@ -262,11 +263,32 @@ namespace 一丙英文背起來
             TTSVoice += "&total=1";
             TTSVoice += "&idx=0";
             TTSVoice += "&textlen=" + Text.Length; // 輸入文字長度
-            TTSVoice += "&tk=" + token;           // 安全性驗證值
+            TTSVoice += "&tk=" + token;            // 安全性驗證值
             TTSVoice += "&client=webapp";
             TTSVoice += "&prev=input";
             //TTSVoice += "&ttsspeed = 0.24";       // 語音速度
             return TTSVoice;
+        }
+
+        /// <summary>
+        /// 計算Google語音的tk驗證參數
+        /// </summary>
+        /// <param name="Text">輸入文字</param>
+        /// <returns>tk驗證參數</returns>
+        private static async Task<string> GetTokenAsync(string Text)
+        {
+            GoogleTranslateToken.GoogleKeyTokenGenerator generator = new GoogleTranslateToken.GoogleKeyTokenGenerator();
+
+            try
+            {
+                // 得使用 ConfigureAwait(false) 不然線程會鎖死
+                return await generator.GenerateAsync(Text).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message.ToString());
+            }
+            return null;
         }
     }
 }

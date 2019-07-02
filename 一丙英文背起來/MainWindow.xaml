@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:一丙英文背起來"
         mc:Ignorable="d"
-        Title="一丙英文背起來 ( Ver 1.7 )" Height="480" Width="750" Closed="Window_Closed">
+        Title="一丙英文背起來 ( Ver 1.8 )" Height="480" Width="750" Closed="Window_Closed">
     <Viewbox x:Name="ScreenAdaptive" Stretch="Fill">
         <Grid>
             <DockPanel VerticalAlignment="Top">
@@ -15,7 +15,7 @@
             </DockPanel>
             <Label Content="注意 : 非經直接授權使用者，請勿使用，否則必究" HorizontalAlignment="Left" Margin="350,-2,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
             <Label Content="更新：" HorizontalAlignment="Left" Margin="350,22,0,0" VerticalAlignment="Top"/>
-            <Label Content="1. New : 由文字取得Google語音&#xA;2. New : 測驗中可播放該單字語音" HorizontalAlignment="Left" Margin="397,22,0,0" VerticalAlignment="Top"/>
+            <Label Content="1. Fixed : 代碼結構調整及安全性修正&#xA;2. Fixed : 更新檢測及下載失敗&#xA;3. Fixed : 熟練度按下去不會全歸零&#xA;4. New : 加強Google語音驗證值的產生方式，保持為最新值" HorizontalAlignment="Left" Margin="397,22,0,0" VerticalAlignment="Top"/>
 
             <TabControl Height="374" Margin="0,76,0,0" VerticalAlignment="Top" SelectedIndex="1" HorizontalAlignment="Left" Width="742" >
                 <TabItem Header="一般" Width="80">
