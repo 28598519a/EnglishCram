@@ -24,7 +24,7 @@ namespace 一丙英文背起來
         private static void SetDefault()
         {
             ini.IniWriteValue("Setting", "rb_Answer_Eng", "True", IniFileName);
-            ini.IniWriteValue("Setting", "rb_Order", "True", IniFileName);
+            ini.IniWriteValue("Setting", "rb_Order", "False", IniFileName);
             ini.IniWriteValue("Setting", "rb_FileCovertExt", ".db", IniFileName);
             ini.IniWriteValue("Setting", "tb_Again_times", "3", IniFileName);
             ini.IniWriteValue("Setting", "tb_pfclim", "3", IniFileName);

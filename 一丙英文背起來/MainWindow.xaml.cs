@@ -4,6 +4,7 @@ using System.Linq;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Controls;
 
 namespace 一丙英文背起來
 {
@@ -54,6 +55,11 @@ namespace 一丙英文背起來
             }
 
             WebServices.CheckVersion(App.CurrentVersion);
+            if (WebServices.WebRequestTest("http://28598519a.github.io/l2d-neko-black"))
+            {
+                wb_live2d.Navigate("http://28598519a.github.io/l2d-neko-black");
+                wb_live2d.Visibility = Visibility.Visible;
+            }
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -385,6 +391,15 @@ namespace 一丙英文背起來
                 App.LRC[App.ResultList[App.Index]].Proficiency = 0;
             }
             Control.Set_Lv_res_list();
+        }
+
+        private void Wb_live2d_LoadCompleted(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        {
+            string script1 = "document.body.style.overflow ='hidden'";     //關閉Scrollbar
+            string script2 = "document.body.style.zoom ='50%'";            //調整網頁內容大小
+            WebBrowser wb = (WebBrowser)sender;
+            wb.InvokeScript("execScript", new Object[] { script1, "JavaScript" });
+            wb.InvokeScript("execScript", new Object[] { script2, "JavaScript" });
         }
     }
 }

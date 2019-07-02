@@ -14,12 +14,12 @@ namespace 一丙英文背起來
         public static string Host = "https://script.google.com";
         public static int Index = 0;
         public static int Again_Count = 0;
-        public static double CurrentVersion = 1.3;
+        public static double CurrentVersion = 1.4;
         public static List<int> ResultList;
         public static List<ResCless> LRC = new List<ResCless>();
 
         public static string Set_rb_Answer_Eng = "True";
-        public static string Set_rb_Order = "True";
+        public static string Set_rb_Order = "False";
         public static string Set_rb_FileCovertExt = ".db";
         public static string Set_tb_Again_times = "3";
         public static string Set_tb_pfclim = "3";
