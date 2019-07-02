@@ -19,6 +19,7 @@ namespace 一丙英文背起來
 
             LoadSetting.Init_Setting(); //讀取設定
             tb_Again_times.Text = App.Set_tb_Again_times;
+            tb_pfclim.Text = App.Set_tb_pfclim;
             if (App.Set_rb_FileCovertExt.Equals(".xlsx"))
             {
                 rb_fmt_xlsx.IsChecked = true;
@@ -40,6 +41,10 @@ namespace 一丙英文背起來
                 if (Convert.ToBoolean(App.Set_cb_AllowEnter) != true)
                 {
                     cb_AllowEnter.IsChecked = false;
+                }
+                if (Convert.ToBoolean(App.Set_cb_pfclim) != true)
+                {
+                    cb_pfclim.IsChecked = false;
                 }
             }
             catch
@@ -68,7 +73,9 @@ namespace 一丙英文背起來
                 App.Set_rb_FileCovertExt = ".db";
             }
             App.Set_tb_Again_times = tb_Again_times.Text;
+            App.Set_tb_pfclim = tb_pfclim.Text;
             App.Set_cb_AllowEnter = cb_AllowEnter.IsChecked.ToString();
+            App.Set_cb_pfclim = cb_pfclim.IsChecked.ToString();
 
             /* 結束程式時保存設定 */
             LoadSetting.SaveSetting();
@@ -214,20 +221,37 @@ namespace 一丙英文背起來
         {
             tb_Answer.Focus();
 
+            int pfclim = 3;
+            try
+            {
+                pfclim = Convert.ToInt32(tb_pfclim.Text);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message.ToString());
+                tb_pfclim.Text = "3";
+            }
+
             if (rb_Answer_Eng.IsChecked == true)
             {
                 if (Database.Question.CleanInput(tb_Answer.Text.ToLower()) == Database.Question.CleanInput(App.LRC[App.ResultList[App.Index]].NameEng.ToLower()))
                 {
                     Control.ClearText();
                     lb_AnswerCheck.Content = "正確!";
-                    App.LRC[App.ResultList[App.Index]].Proficiency++;
+                    if (Math.Abs(App.LRC[App.ResultList[App.Index]].Proficiency) < Math.Abs(pfclim))
+                    {
+                        App.LRC[App.ResultList[App.Index]].Proficiency++;
+                    }
                     Control.Set_Lv_res_list();
-                    App.Index++;
+                    do { App.Index++; } while (App.LRC[App.ResultList[App.Index]].Proficiency >= pfclim && cb_pfclim.IsChecked == true);
                     Database.Question.NewQuestion();
                 }
                 else
                 {
-                    App.LRC[App.ResultList[App.Index]].Proficiency--;
+                    if (Math.Abs(App.LRC[App.ResultList[App.Index]].Proficiency) < Math.Abs(pfclim))
+                    {
+                        App.LRC[App.ResultList[App.Index]].Proficiency--;
+                    }
                     Control.Set_Lv_res_list();
                     lb_AnswerCheck.Content = "錯誤!" + Environment.NewLine + "正確答案為 " + App.LRC[App.ResultList.ToList()[App.Index]].NameEng;
                     lb_Again_count.Content = App.Again_Count;
@@ -242,14 +266,20 @@ namespace 一丙英文背起來
                 {
                     Control.ClearText();
                     lb_AnswerCheck.Content = "正確!";
-                    App.LRC[App.ResultList[App.Index]].Proficiency++;
+                    if (Math.Abs(App.LRC[App.ResultList[App.Index]].Proficiency) < Math.Abs(pfclim))
+                    {
+                        App.LRC[App.ResultList[App.Index]].Proficiency++;
+                    }
                     Control.Set_Lv_res_list();
-                    App.Index++;
+                    do { App.Index++; } while (App.LRC[App.ResultList[App.Index]].Proficiency >= pfclim && cb_pfclim.IsChecked == true);
                     Database.Question.NewQuestion();
                 }
                 else
                 {
-                    App.LRC[App.ResultList[App.Index]].Proficiency--;
+                    if (Math.Abs(App.LRC[App.ResultList[App.Index]].Proficiency) < Math.Abs(pfclim))
+                    {
+                        App.LRC[App.ResultList[App.Index]].Proficiency--;
+                    }
                     Control.Set_Lv_res_list();
                     lb_Again_count.Content = App.Again_Count;
                     lb_AnswerCheck.Content = "錯誤!" + Environment.NewLine + "正確答案為 " + App.LRC[App.ResultList[App.Index]].NameCht;
@@ -346,6 +376,15 @@ namespace 一丙英文背起來
         {
             AboutWindow aboutWindow = new AboutWindow();
             aboutWindow.Show();
+        }
+
+        private void Btn_clrpfs_Click(object sender, RoutedEventArgs e)
+        {
+            for ( int i = 0; i < App.LRC.Count; i++)
+            {
+                App.LRC[App.ResultList[App.Index]].Proficiency = 0;
+            }
+            Control.Set_Lv_res_list();
         }
     }
 }

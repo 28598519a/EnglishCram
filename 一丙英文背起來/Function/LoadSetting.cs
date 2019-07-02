@@ -27,7 +27,9 @@ namespace 一丙英文背起來
             ini.IniWriteValue("Setting", "rb_Order", "True", IniFileName);
             ini.IniWriteValue("Setting", "rb_FileCovertExt", ".db", IniFileName);
             ini.IniWriteValue("Setting", "tb_Again_times", "3", IniFileName);
+            ini.IniWriteValue("Setting", "tb_pfclim", "3", IniFileName);
             ini.IniWriteValue("Setting", "cb_AllowEnter", "True", IniFileName);
+            ini.IniWriteValue("Setting", "cb_pfclim", "True", IniFileName);
         }
 
         private static void ReadSetting()
@@ -36,7 +38,9 @@ namespace 一丙英文背起來
             App.Set_rb_Order = ini.IniReadValue("Setting", "rb_Order", IniFileName);
             App.Set_rb_FileCovertExt = ini.IniReadValue("Setting", "rb_FileCovertExt", IniFileName);
             App.Set_tb_Again_times = ini.IniReadValue("Setting", "tb_Again_times", IniFileName);
+            App.Set_tb_pfclim = ini.IniReadValue("Setting", "tb_pfclim", IniFileName);
             App.Set_cb_AllowEnter = ini.IniReadValue("Setting", "cb_AllowEnter", IniFileName);
+            App.Set_cb_pfclim = ini.IniReadValue("Setting", "cb_pfclim", IniFileName);
         }
 
         public static void SaveSetting()
@@ -45,7 +49,9 @@ namespace 一丙英文背起來
             ini.IniWriteValue("Setting", "rb_Order", App.Set_rb_Order, IniFileName);
             ini.IniWriteValue("Setting", "rb_FileCovertExt", App.Set_rb_FileCovertExt, IniFileName);
             ini.IniWriteValue("Setting", "tb_Again_times", App.Set_tb_Again_times, IniFileName);
+            ini.IniWriteValue("Setting", "tb_pfclim", App.Set_tb_pfclim, IniFileName);
             ini.IniWriteValue("Setting", "cb_AllowEnter", App.Set_cb_AllowEnter, IniFileName);
+            ini.IniWriteValue("Setting", "cb_pfclim", App.Set_cb_pfclim, IniFileName);
         }
 
         public class SetupIniIP
