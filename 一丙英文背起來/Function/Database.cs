@@ -47,9 +47,10 @@ namespace 一丙英文背起來
 
                 try
                 {
-                    /* [^\"]+ 匹配任何除了 " 以外的字元 */
+                    /* [^\"]+ 匹配任何除了 " 以外的字元 ; [0-9]匹配數字 */
                     MatchCollection chtWords = Regex.Matches(fileText, "cht = \"[^\"]+\"");
                     MatchCollection engWords = Regex.Matches(fileText, "eng = \"[^\"]+\"");
+                    MatchCollection Proficiency = Regex.Matches(fileText, "pfc = \"[0-9]+\"");
 
                     foreach (Match mt in chtWords)
                     {
@@ -66,6 +67,16 @@ namespace 一丙英文背起來
                         string engWordsName = mt.Value.Replace("eng = ", string.Empty).Trim('"');
                         App.LRC[i].NameEng = engWordsName;
                         i++;
+                    }
+                    int k = 0;
+                    foreach (Match mt in Proficiency)
+                    {
+                        if (k > App.LRC.Count - 1)
+                            break;
+
+                        string ProficiencyName = mt.Value.Replace("pfc = ", string.Empty).Trim('"');
+                        App.LRC[k].Proficiency = ProficiencyName;
+                        k++;
                     }
                     ((MainWindow)Application.Current.MainWindow).lv_res_list.ItemsSource = App.LRC;
                     ((MainWindow)Application.Current.MainWindow).lb_lsCount.Content = App.LRC.Count;
@@ -161,8 +172,7 @@ namespace 一丙英文背起來
                 {
                     list += "cht = \"" + App.LRC[i].NameCht + "\"" + Environment.NewLine +
                         "eng = \"" + App.LRC[i].NameEng + "\"" + Environment.NewLine +
-                        //"pfc = \"" + App.LRC[i].Proficiency + "\"" + Environment.NewLine;
-                        "pfc = \"" + 0 + "\"" + Environment.NewLine;
+                        "pfc = \"" + App.LRC[i].Proficiency + "\"" + Environment.NewLine;
                 }
                 return list;
             }
@@ -190,8 +200,7 @@ namespace 一丙英文背起來
                     {
                         SrcExcelApp.Cells[i, 1] = App.LRC[i - 1].NameCht;
                         SrcExcelApp.Cells[i, 2] = App.LRC[i - 1].NameEng;
-                        //SrcExcelApp.Cells[i, 3] = App.LRC[i - 1].Proficiency;
-                        SrcExcelApp.Cells[i, 3] = 0;
+                        SrcExcelApp.Cells[i, 3] = App.LRC[i - 1].Proficiency;
                     }
 
                     /*

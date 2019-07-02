@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:一丙英文背起來"
         mc:Ignorable="d"
-        Title="一丙英文背起來 ( Ver 0.8Beta )" Height="450" Width="750" Closed="Window_Closed">
+        Title="一丙英文背起來 ( Ver 0.9Beta )" Height="450" Width="750" Closed="Window_Closed">
     <Viewbox x:Name="ScreenAdaptive" Stretch="Fill">
         <Grid>
-            <Label Content="開發者：" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top"/>
-            <Label x:Name="lb_tpd" Content="107360715 (劃破黑夜)" HorizontalAlignment="Left" Margin="58,0,0,0" VerticalAlignment="Top"/>
+            <Label Content="開發者：107360715 (劃破黑夜)" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top"/>
+            <Label Content="注意 : 非經直接授權使用者，請勿使用，否則必究" HorizontalAlignment="Left" Margin="10,26,0,0" VerticalAlignment="Top"/>
             <Label Content="更新：" HorizontalAlignment="Left" Margin="350,0,0,0" VerticalAlignment="Top"/>
-            <Label x:Name="lb_tpd1" Content="1. New : 增加了版本檢查機制&#xA;2. New : 資料庫增加了一項熟練度標示&#xA;               (下一版本會有相關支援功能)&#xA;3. 通知 : 本訊息區域會在未來的版本移至別處&#xA;4. 通知 : 即將推出正式版本, 請注意更新通知&#xA;5. 通知: 非經直接授權使用者，請勿使用，否則必究" HorizontalAlignment="Left" Margin="397,0,0,0" VerticalAlignment="Top"/>
+            <Label Content="1. BugFixs : 版本檢查視窗關閉導致程式殘留&#xA;2. New : 版本檢查前會先檢測連線狀態&#xA;3. New : 熟練度標示已可顯示 (下一版本會有進一步功能)&#xA;4. 通知 : 本訊息區域會在未來的版本移至別處&#xA;5. 通知 : 即將推出正式版本, 請注意更新通知" HorizontalAlignment="Left" Margin="397,0,0,0" VerticalAlignment="Top"/>
 
             <TabControl x:Name="tbc_main" Height="344" Margin="0,76,0,0" VerticalAlignment="Top" SelectedIndex="1" HorizontalAlignment="Left" Width="742" >
                 <TabItem Header="一般" Width="80">
@@ -48,8 +48,9 @@
                         <ListView x:Name="lv_res_list" HorizontalAlignment="Left" Height="282" Margin="349,10,0,0" VerticalAlignment="Top" Width="361">
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="中文" Width="175" DisplayMemberBinding="{Binding NameCht}" />
+                                    <GridViewColumn Header="中文" Width="175" DisplayMemberBinding="{Binding NameCht}"/>
                                     <GridViewColumn Header="英文" Width="175" DisplayMemberBinding="{Binding NameEng}"/>
+                                    <GridViewColumn Header="熟練度" DisplayMemberBinding="{Binding Proficiency}"/>
                                 </GridView>
                             </ListView.View>
                         </ListView>

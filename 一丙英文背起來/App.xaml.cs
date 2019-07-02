@@ -10,8 +10,10 @@ namespace 一丙英文背起來
     public partial class App : Application
     {
         public static string Root = Environment.CurrentDirectory;
+        public static string Host = "https://script.google.com";
         public static int Index = 0;
         public static int Again_Count = 0;
+        public static double CurrentVersion = 0.9;
         public static List<int> ResultList;
         public static List<ResCless> LRC = new List<ResCless>();
 

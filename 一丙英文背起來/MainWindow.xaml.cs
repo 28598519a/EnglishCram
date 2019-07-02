@@ -51,7 +51,7 @@ namespace 一丙英文背起來
                 System.Windows.MessageBox.Show("設定讀取失敗" + Environment.NewLine + "執行部分設定初始化...", "異常");
             }
 
-            WebServices.CheckVersion(0.8);
+            WebServices.CheckVersion(App.CurrentVersion);
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -337,6 +337,11 @@ namespace 一丙英文背起來
                 //模擬點擊 送出鍵
                 Btn_Again_Click(sender, e);
             }
+        }
+
+        private void Btn_Load_txt_list_Click1(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

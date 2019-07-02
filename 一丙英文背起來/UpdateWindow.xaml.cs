@@ -25,6 +25,11 @@ namespace 一丙英文背起來
             hlk_ReleaseUrl.NavigateUri = new Uri(ReleaseUrl);
         }
 
+        private void UpdateWindow_Closed(object sender, EventArgs e)
+        {
+            Control.MainVisibility(true);
+        }
+
         private void Btn_ok_Click(object sender, RoutedEventArgs e)
         {
             Close();

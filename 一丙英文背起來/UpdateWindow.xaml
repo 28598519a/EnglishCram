@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:一丙英文背起來"
         mc:Ignorable="d"
-        Title="更新通知" Height="300" Width="600">
+        Title="更新通知" Height="300" Width="600" Closed="UpdateWindow_Closed">
     <Grid>
         <Button x:Name="btn_ok" Content="知道了" HorizontalAlignment="Left" Margin="217,193,0,0" VerticalAlignment="Top" Width="135" Height="45" Click="Btn_ok_Click"/>
         <Label x:Name="lb_ServerVersion" Content="最新版本號 : " HorizontalAlignment="Left" Margin="48,84,0,0" VerticalAlignment="Top" FontSize="16"/>
