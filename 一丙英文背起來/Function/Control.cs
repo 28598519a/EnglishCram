@@ -47,11 +47,35 @@ namespace 一丙英文背起來
             }
         }
 
+        public static void Lv_res_list_autowidth()
+        {
+            /*
+             * 中文、熟練度欄寬度自適應
+             * 強制更新欄位狀態已確保ActualWidth被設定
+             * 英文欄位取得剩餘寬度
+             */
+            ((MainWindow)Application.Current.MainWindow).GC_Cht.Width = double.NaN;
+            ((MainWindow)Application.Current.MainWindow).GC_Eng.Width = double.NaN;
+            ((MainWindow)Application.Current.MainWindow).GC_Pfc.Width = double.NaN;
+            ((MainWindow)Application.Current.MainWindow).lv_res_list.UpdateLayout();
+
+            if (((MainWindow)Application.Current.MainWindow).lv_res_list.Width > ((MainWindow)Application.Current.MainWindow).GC_Cht.ActualWidth + ((MainWindow)Application.Current.MainWindow).GC_Eng.ActualWidth + ((MainWindow)Application.Current.MainWindow).GC_Pfc.ActualWidth)
+            {
+                ((MainWindow)Application.Current.MainWindow).GC_Eng.Width = ((MainWindow)Application.Current.MainWindow).lv_res_list.Width - ((MainWindow)Application.Current.MainWindow).GC_Cht.ActualWidth - ((MainWindow)Application.Current.MainWindow).GC_Pfc.ActualWidth - 10;
+            }
+        }
+
+        public static void Set_Lv_res_list()
+        {
+            ((MainWindow)Application.Current.MainWindow).lv_res_list.ItemsSource = App.LRC;
+            ((MainWindow)Application.Current.MainWindow).lb_lsCount.Content = App.LRC.Count;
+        }
+
         [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
-        static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
+        private static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
 
         [DllImport("user32.Dll")]
-        static extern int PostMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
+        private static extern int PostMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
 
         private const uint WM_CLOSE = 0x0010;
 

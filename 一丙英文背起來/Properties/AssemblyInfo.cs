@@ -6,7 +6,7 @@ using System.Windows;
 // 變更這些屬性的值即可修改組件的相關
 // 資訊。
 [assembly: AssemblyTitle("一丙英文背起來")]
-[assembly: AssemblyDescription("PreView版本")]
+[assembly: AssemblyDescription("Offical版本")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("一丙英文背起來")]
@@ -49,5 +49,5 @@ using System.Windows;
 // 您可以指定所有的值，或將組建編號或修訂編號設為預設值
 // 指定為預設值: 
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.9")]
-[assembly: AssemblyFileVersion("0.9")]
+[assembly: AssemblyVersion("1.0")]
+[assembly: AssemblyFileVersion("1.0")]

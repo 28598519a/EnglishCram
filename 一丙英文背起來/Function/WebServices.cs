@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Text;
+using System.Collections.Specialized;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -17,25 +18,19 @@ namespace 一丙英文背起來
 
                 using (WebClient client = new WebClient())
                 {
-                    /*
-                     * 指定 WebClient 編碼
-                     * 指定 WebClient 的 Content-Type header
-                     */
-                    client.Encoding = Encoding.UTF8;
-                    client.Headers.Add(HttpRequestHeader.ContentType, "application/json");
-
                     try
                     {
-                        /* 準備寫入的JsonData */
-                        JObject obj = new JObject
-                        (
-                            new JProperty("parameter", new JObject(
-                                new JProperty("ClientVersion", ClientVersion.ToString())
-                                ))
-                        );
-                        /* JSON序列化 -> 送出JSON -> JSON反序列化 */
-                        string Postjson = JsonConvert.SerializeObject(obj, Formatting.Indented);
-                        Webresponse = JsonConvert.DeserializeObject<JObject>(client.UploadString(url, "POST", Postjson));
+                       /*
+                        * 指定 WebClient 編碼
+                        * 指定 WebClient 的 Content-Type header
+                        */
+                        client.Encoding = Encoding.UTF8;
+                        client.Headers.Add(HttpRequestHeader.ContentType, "application/x-www-form-urlencoded");
+
+                        /* 設定資料 -> 送出資料 -> JSON反序列化 */
+                        NameValueCollection Postdata = new NameValueCollection();
+                        Postdata.Add("ClientVersion", ClientVersion.ToString());
+                        Webresponse = JsonConvert.DeserializeObject<JObject>(Encoding.UTF8.GetString(client.UploadValues(url, "POST", Postdata)));
                     }
                     catch (Exception ex)
                     {

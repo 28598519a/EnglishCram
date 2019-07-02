@@ -4,7 +4,6 @@ using System.Linq;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using System.Text;
 
 namespace 一丙英文背起來
 {
@@ -134,6 +133,7 @@ namespace 一丙英文背起來
                         File.Delete(openFileDialog.FileName);
                     }
                 }
+                Control.Lv_res_list_autowidth();
             }
         }
 
@@ -153,6 +153,7 @@ namespace 一丙英文背起來
                 {
                     System.Windows.MessageBox.Show(ex.Message.ToString());
                 }
+                Control.Lv_res_list_autowidth();
             }
             else
             {
@@ -183,7 +184,6 @@ namespace 一丙英文背起來
                         Random GetRandomInt = new Random(Guid.NewGuid().GetHashCode());
                         App.ResultList = listLinq.OrderBy(o => GetRandomInt.Next()).ToList();
                     }
-
                     Database.NewQuestion();
                 }
             }
@@ -339,9 +339,10 @@ namespace 一丙英文背起來
             }
         }
 
-        private void Btn_Load_txt_list_Click1(object sender, RoutedEventArgs e)
+        private void Mi_about_Click(object sender, RoutedEventArgs e)
         {
-
+            AboutWindow aboutWindow = new AboutWindow();
+            aboutWindow.Show();
         }
     }
 }

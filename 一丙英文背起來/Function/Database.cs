@@ -78,8 +78,7 @@ namespace 一丙英文背起來
                         App.LRC[k].Proficiency = ProficiencyName;
                         k++;
                     }
-                    ((MainWindow)Application.Current.MainWindow).lv_res_list.ItemsSource = App.LRC;
-                    ((MainWindow)Application.Current.MainWindow).lb_lsCount.Content = App.LRC.Count;
+                    Control.Set_Lv_res_list();
                 }
                 catch (Exception ex)
                 {
@@ -129,8 +128,7 @@ namespace 一丙英文背起來
                         }
                         count++;
                     }
-                    ((MainWindow)Application.Current.MainWindow).lv_res_list.ItemsSource = App.LRC;
-                    ((MainWindow)Application.Current.MainWindow).lb_lsCount.Content = App.LRC.Count;
+                    Control.Set_Lv_res_list();
                 }
                 catch (Exception ex)
                 {
