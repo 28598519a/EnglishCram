@@ -8,33 +8,36 @@ using Excel = Microsoft.Office.Interop.Excel; //Define為Excel，以避免Applic
 
 namespace 一丙英文背起來
 {
-    public class Database
+    namespace Database
     {
-        public static void NewQuestion()
+        public class Question
         {
-            if (App.Index >= App.ResultList.Count)
+            public static void NewQuestion()
             {
-                App.Index = 0;
-                Random GetRandomInt = new Random(Guid.NewGuid().GetHashCode());
-                App.ResultList = App.ResultList.OrderBy(o => GetRandomInt.Next()).ToList();
+                if (App.Index >= App.ResultList.Count)
+                {
+                    App.Index = 0;
+                    Random GetRandomInt = new Random(Guid.NewGuid().GetHashCode());
+                    App.ResultList = App.ResultList.OrderBy(o => GetRandomInt.Next()).ToList();
+                }
+                if (((MainWindow)Application.Current.MainWindow).rb_Answer_Eng.IsChecked == true)
+                    ((MainWindow)Application.Current.MainWindow).lb_Question.Content = App.LRC[App.ResultList.ToList()[App.Index]].NameCht;
+                else ((MainWindow)Application.Current.MainWindow).lb_Question.Content = App.LRC[App.ResultList.ToList()[App.Index]].NameEng;
             }
-            if (((MainWindow)Application.Current.MainWindow).rb_Answer_Eng.IsChecked == true)
-                ((MainWindow)Application.Current.MainWindow).lb_Question.Content = App.LRC[App.ResultList.ToList()[App.Index]].NameCht;
-            else ((MainWindow)Application.Current.MainWindow).lb_Question.Content = App.LRC[App.ResultList.ToList()[App.Index]].NameEng;
-        }
 
-        public static string CleanInput(string strIn)
-        {
-            /* \W 匹配任何非文字字元 (亦可用^\w) */
-            try
+            public static string CleanInput(string strIn)
             {
-                return Regex.Replace(strIn, @"[\W]+", string.Empty, RegexOptions.None, TimeSpan.FromSeconds(1.5));
-            }
-            /* 替換時間長於1.5秒就放棄替換 */
-            catch (RegexMatchTimeoutException)
-            {
-                //return string.Empty;
-                return strIn;
+                // \W 匹配任何非文字字元 (亦可用^\w)
+                try
+                {
+                    return Regex.Replace(strIn, @"[\W]+", string.Empty, RegexOptions.None, TimeSpan.FromSeconds(1.5));
+                }
+                // 替換時間長於1.5秒就放棄替換
+                catch (RegexMatchTimeoutException)
+                {
+                    //return string.Empty;
+                    return strIn;
+                }
             }
         }
 
@@ -43,11 +46,10 @@ namespace 一丙英文背起來
             public static void txt_list(string fileText)
             {
                 App.LRC.Clear();
-                ((MainWindow)Application.Current.MainWindow).lv_res_list.ItemsSource = null;
 
                 try
                 {
-                    /* [^\"]+ 匹配任何除了 " 以外的字元 ; [0-9]匹配數字 */
+                    // [^\"]+ 匹配任何除了 " 以外的字元 ; [0-9]匹配數字
                     MatchCollection chtWords = Regex.Matches(fileText, "cht = \"[^\"]+\"");
                     MatchCollection engWords = Regex.Matches(fileText, "eng = \"[^\"]+\"");
                     MatchCollection Proficiency = Regex.Matches(fileText, "pfc = \"[0-9]+\"");
@@ -55,7 +57,7 @@ namespace 一丙英文背起來
                     foreach (Match mt in chtWords)
                     {
                         string chtWordsName = mt.Value.Replace("cht = ", string.Empty).Trim('"');
-                        App.LRC.Add(new ResCless { NameCht = chtWordsName, NameEng = string.Empty, Proficiency = string.Empty });
+                        App.LRC.Add(new ResCless { NameCht = chtWordsName, NameEng = string.Empty, Proficiency = 0 });
                     }
 
                     int i = 0;
@@ -74,7 +76,7 @@ namespace 一丙英文背起來
                         if (k > App.LRC.Count - 1)
                             break;
 
-                        string ProficiencyName = mt.Value.Replace("pfc = ", string.Empty).Trim('"');
+                        int ProficiencyName = Convert.ToInt32(mt.Value.Replace("pfc = ", string.Empty).Trim('"'));
                         App.LRC[k].Proficiency = ProficiencyName;
                         k++;
                     }
@@ -86,12 +88,11 @@ namespace 一丙英文背起來
                 }
             }
 
-            public static void excel_list(string filePath)
+            public static void Excel_list(string filePath)
             {
                 App.LRC.Clear();
-                ((MainWindow)Application.Current.MainWindow).lv_res_list.ItemsSource = null;
 
-                /* 呼叫Excel程式 且 不顯示 */
+                // 呼叫Excel程式 且 不顯示
                 Excel.Application SrcExcelApp = new Excel.Application();
                 SrcExcelApp.Visible = false;
 
@@ -115,7 +116,7 @@ namespace 一丙英文背起來
                     {
                         if (count % 3 == 0)
                         {
-                            App.LRC.Add(new ResCless { NameCht = item.Cells.Text, NameEng = string.Empty, Proficiency = string.Empty });
+                            App.LRC.Add(new ResCless { NameCht = item.Cells.Text, NameEng = string.Empty, Proficiency = 0 });
                         }
                         else if (count % 3 == 1)
                         {
@@ -123,7 +124,7 @@ namespace 一丙英文背起來
                         }
                         else if (count % 3 == 2)
                         {
-                            App.LRC[i].Proficiency = item.Cells.Text;
+                            App.LRC[i].Proficiency = Convert.ToInt32(item.Cells.Text);
                             i++;
                         }
                         count++;
@@ -142,7 +143,6 @@ namespace 一丙英文背起來
                      * 釋放Excel資源 ，並呼叫GC回收
                      */
                     SrcWorkBook.Close();
-                    SrcWorkBook = null;
                     SrcExcelApp.Quit();
                     System.Runtime.InteropServices.Marshal.FinalReleaseComObject(SrcExcelApp);
                     GC.Collect();
@@ -152,15 +152,35 @@ namespace 一丙英文背起來
 
         public class Save
         {
-            public static void As_db(string path)
+            public static bool As_db(string path)
             {
-                byte[] List_bytes = Encoding.Unicode.GetBytes(LRC2txt());
-                File.WriteAllBytes(path + ".db", GZip.Compress(List_bytes));
+                path += ".db";
+                if (File.Exists(path))
+                {
+                    MessageBoxResult dialogResult = System.Windows.MessageBox.Show("檔案已存在，是否覆蓋", "警告", MessageBoxButton.YesNo);
+                    if (dialogResult == MessageBoxResult.Yes)
+                    {
+                        byte[] List_bytes = Encoding.Unicode.GetBytes(LRC2txt());
+                        File.WriteAllBytes(path, GZip.Compress(List_bytes));
+                        return true;
+                    }
+                }
+                return false;
             }
 
-            public static void As_txt(string path)
+            public static bool As_txt(string path)
             {
-                File.WriteAllText(path + ".txt",LRC2txt());
+                path += ".txt";
+                if (File.Exists(path))
+                {
+                    MessageBoxResult dialogResult = System.Windows.MessageBox.Show("檔案已存在，是否覆蓋", "警告", MessageBoxButton.YesNo);
+                    if (dialogResult == MessageBoxResult.Yes)
+                    {
+                        File.WriteAllText(path, LRC2txt());
+                        return true;
+                    }
+                }
+                return false;
             }
 
             private static string LRC2txt()
@@ -175,9 +195,9 @@ namespace 一丙英文背起來
                 return list;
             }
 
-            public static void As_excel(string path)
+            public static bool As_excel(string path)
             {
-                /* 呼叫Excel程式 且 不顯示 */
+                // 呼叫Excel程式 且 不顯示
                 Excel.Application SrcExcelApp = new Excel.Application();
                 SrcExcelApp.Visible = false;
 
@@ -209,6 +229,17 @@ namespace 一丙英文背起來
                     SrcRange = SrcWorksheet.UsedRange;
                     SrcRange.EntireRow.AutoFit();
                     SrcRange.EntireColumn.AutoFit();
+
+                    try
+                    {
+                        // 儲存Excel檔 (使用當前Excel版本預設的副檔名)
+                        SrcWorkBook.SaveAs(path);
+                    }
+                    catch
+                    {
+                        // 覆蓋選否時，後續潛在的窗口不顯示，直接以預設值選擇
+                        SrcExcelApp.DisplayAlerts = false;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -217,18 +248,16 @@ namespace 一丙英文背起來
                 finally
                 {
                     /*
-                     * 儲存Excel檔 (副檔名由Excel版本判斷)
                      * 關閉Excel活頁簿
                      * 關閉Excel
                      * 釋放Excel資源，並呼叫GC回收
                      */
-                    SrcWorkBook.SaveAs(path);
                     SrcWorkBook.Close();
-                    SrcWorkBook = null;
                     SrcExcelApp.Quit();
                     System.Runtime.InteropServices.Marshal.FinalReleaseComObject(SrcExcelApp);
                     GC.Collect();
                 }
+                return true;
             }
         }
     }

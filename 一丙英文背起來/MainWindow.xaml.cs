@@ -29,8 +29,6 @@ namespace 一丙英文背起來
             }
             try
             {
-                cb_FileCovert.IsChecked = Convert.ToBoolean(App.Set_cb_FileCovert);
-
                 if (Convert.ToBoolean(App.Set_rb_Answer_Eng) != true)
                 {
                     rb_Answer_Cht.IsChecked = true;
@@ -70,7 +68,6 @@ namespace 一丙英文背起來
                 App.Set_rb_FileCovertExt = ".db";
             }
             App.Set_tb_Again_times = tb_Again_times.Text;
-            App.Set_cb_FileCovert = cb_FileCovert.IsChecked.ToString();
             App.Set_cb_AllowEnter = cb_AllowEnter.IsChecked.ToString();
 
             /* 結束程式時保存設定 */
@@ -79,25 +76,26 @@ namespace 一丙英文背起來
 
         private void Btn_Load_txt_list_Click(object sender, RoutedEventArgs e)
         {
-            /* 開啟選擇檔案視窗 */
+            // 開啟選擇檔案視窗
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
             openFileDialog.InitialDirectory = App.Root;
             openFileDialog.Filter = "(*.db;*.txt;*.xls;*.xlsx)|*.db;*.txt;*.xls;*.xlsx";
 
             if (openFileDialog.ShowDialog() == true)
             {
-                lb_Database_name.Content = Path.GetFileName(openFileDialog.FileName);
-                string FileExt = Path.GetExtension(openFileDialog.FileName);
+                App.FileRoot = openFileDialog.FileName;
+                lb_Database_name.Content = Path.GetFileName(App.FileRoot);
+                string FileExt = Path.GetExtension(App.FileRoot);
 
                 if (FileExt.Equals(".txt"))
                 {
-                    Database.Load.txt_list(File.ReadAllText(openFileDialog.FileName));
+                    Database.Load.txt_list(File.ReadAllText(App.FileRoot));
                 }
                 else if (FileExt.Equals(".db"))
                 {
                     try
                     {
-                        var stream = new StreamReader(new MemoryStream(GZip.Decompress(File.ReadAllBytes(openFileDialog.FileName))));
+                        StreamReader stream = new StreamReader(new MemoryStream(GZip.Decompress(File.ReadAllBytes(App.FileRoot))));
                         Database.Load.txt_list(stream.ReadToEnd());
                     }
                     catch (Exception ex)
@@ -107,33 +105,41 @@ namespace 一丙英文背起來
                 }
                 else if (FileExt.Equals(".xls") || FileExt.Equals(".xlsx"))
                 {
-                    /* 注意: 執行之電腦必須有安裝Excel才能使用 */
-                    Database.Load.excel_list(openFileDialog.FileName);
-                }
-
-                if (cb_FileCovert.IsChecked == true)
-                {
-                    string path = Path.GetDirectoryName(openFileDialog.FileName) + "\\" + Path.GetFileNameWithoutExtension(openFileDialog.FileName);
-
-                    if (rb_fmt_db.IsChecked == true)
-                    {
-                        Database.Save.As_db(path);
-                    }
-                    else if (rb_fmt_txt.IsChecked == true)
-                    {
-                        Database.Save.As_txt(path);
-                    }
-                    else if (rb_fmt_xlsx.IsChecked == true)
-                    {
-                        Database.Save.As_excel(path);
-                    }
-
-                    if (cb_FileCovert_delete.IsChecked == true)
-                    {
-                        File.Delete(openFileDialog.FileName);
-                    }
+                    // 注意: 執行之電腦必須有安裝Excel才能使用
+                    Database.Load.Excel_list(App.FileRoot);
                 }
                 Control.Lv_res_list_autowidth();
+            }
+        }
+
+        private void Btn_FileCovert_Click(object sender, RoutedEventArgs e)
+        {
+            if (lb_Database_name.Content.ToString() != string.Empty)
+            {
+                if (cb_FileCovert_delete.IsChecked == true)
+                {
+                    File.Delete(App.FileRoot);
+                }
+
+                // 取得不包含附檔名之檔案路徑
+                string path = App.FileRoot.Replace(Path.GetExtension(App.FileRoot), string.Empty);
+
+                if (rb_fmt_db.IsChecked == true)
+                {
+                    Database.Save.As_db(path);
+                }
+                else if (rb_fmt_txt.IsChecked == true)
+                {
+                    Database.Save.As_txt(path);
+                }
+                else if (rb_fmt_xlsx.IsChecked == true)
+                {
+                    Database.Save.As_excel(path);
+                }
+            }
+            else
+            {
+                Control.ShowAutoClosingMessageBox("資料庫沒有任何資料");
             }
         }
 
@@ -184,7 +190,7 @@ namespace 一丙英文背起來
                         Random GetRandomInt = new Random(Guid.NewGuid().GetHashCode());
                         App.ResultList = listLinq.OrderBy(o => GetRandomInt.Next()).ToList();
                     }
-                    Database.NewQuestion();
+                    Database.Question.NewQuestion();
                 }
             }
             else
@@ -210,15 +216,19 @@ namespace 一丙英文背起來
 
             if (rb_Answer_Eng.IsChecked == true)
             {
-                if (Database.CleanInput(tb_Answer.Text.ToLower()) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameEng.ToLower()))
+                if (Database.Question.CleanInput(tb_Answer.Text.ToLower()) == Database.Question.CleanInput(App.LRC[App.ResultList[App.Index]].NameEng.ToLower()))
                 {
                     Control.ClearText();
                     lb_AnswerCheck.Content = "正確!";
+                    App.LRC[App.ResultList[App.Index]].Proficiency++;
+                    Control.Set_Lv_res_list();
                     App.Index++;
-                    Database.NewQuestion();
+                    Database.Question.NewQuestion();
                 }
                 else
                 {
+                    App.LRC[App.ResultList[App.Index]].Proficiency--;
+                    Control.Set_Lv_res_list();
                     lb_AnswerCheck.Content = "錯誤!" + Environment.NewLine + "正確答案為 " + App.LRC[App.ResultList.ToList()[App.Index]].NameEng;
                     lb_Again_count.Content = App.Again_Count;
                     Control.Test(false);
@@ -228,18 +238,22 @@ namespace 一丙英文背起來
             }
             else if (rb_Answer_Cht.IsChecked == true)
             {
-                if (Database.CleanInput(tb_Answer.Text) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameCht))
+                if (Database.Question.CleanInput(tb_Answer.Text) == Database.Question.CleanInput(App.LRC[App.ResultList[App.Index]].NameCht))
                 {
                     Control.ClearText();
                     lb_AnswerCheck.Content = "正確!";
+                    App.LRC[App.ResultList[App.Index]].Proficiency++;
+                    Control.Set_Lv_res_list();
                     App.Index++;
-                    Database.NewQuestion();
+                    Database.Question.NewQuestion();
                 }
                 else
                 {
-                    Control.Test(false);
+                    App.LRC[App.ResultList[App.Index]].Proficiency--;
+                    Control.Set_Lv_res_list();
                     lb_Again_count.Content = App.Again_Count;
                     lb_AnswerCheck.Content = "錯誤!" + Environment.NewLine + "正確答案為 " + App.LRC[App.ResultList[App.Index]].NameCht;
+                    Control.Test(false);
                     tb_Again.Focus();
                 }
             }
@@ -262,7 +276,7 @@ namespace 一丙英文背起來
 
             if (rb_Answer_Eng.IsChecked == true)
             {
-                if (Database.CleanInput(tb_Again.Text.ToLower()) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameEng.ToLower()))
+                if (Database.Question.CleanInput(tb_Again.Text.ToLower()) == Database.Question.CleanInput(App.LRC[App.ResultList[App.Index]].NameEng.ToLower()))
                 {
                     if (App.Again_Count < AgainTimes)
                     {
@@ -273,7 +287,7 @@ namespace 一丙英文背起來
                         if (App.Again_Count == AgainTimes)
                         {
                             Control.EndExercise();
-                            Database.NewQuestion();
+                            Database.Question.NewQuestion();
                             tb_Answer.Focus();
                         }
                     }
@@ -285,7 +299,7 @@ namespace 一丙英文背起來
             }
             else if (rb_Answer_Cht.IsChecked == true)
             {
-                if (Database.CleanInput(tb_Again.Text) == Database.CleanInput(App.LRC[App.ResultList[App.Index]].NameCht))
+                if (Database.Question.CleanInput(tb_Again.Text) == Database.Question.CleanInput(App.LRC[App.ResultList[App.Index]].NameCht))
                 {
                     if (App.Again_Count < AgainTimes)
                     {
@@ -296,7 +310,7 @@ namespace 一丙英文背起來
                         if (App.Again_Count == AgainTimes)
                         {
                             Control.EndExercise();
-                            Database.NewQuestion();
+                            Database.Question.NewQuestion();
                             tb_Answer.Focus();
                         }
                     }
@@ -306,18 +320,7 @@ namespace 一丙英文背起來
                     tb_Again.Text = string.Empty;
                 }
             }
-        }
-
-        private void Cb_FileCovert_Checked(object sender, RoutedEventArgs e)
-        {
-            cb_FileCovert_delete.IsEnabled = true;
-        }
-
-        private void Cb_FileCovert_Unchecked(object sender, RoutedEventArgs e)
-        {
-            cb_FileCovert_delete.IsChecked = false;
-            cb_FileCovert_delete.IsEnabled = false;
-        }
+        } 
 
         private void Tb_Answer_KeyDown(object sender, KeyEventArgs e)
         {

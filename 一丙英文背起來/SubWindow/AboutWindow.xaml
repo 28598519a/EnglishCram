@@ -5,11 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:一丙英文背起來"
         mc:Ignorable="d"
-        Title="關於" Height="300" Width="330" HorizontalContentAlignment="Stretch">
+        Title="關於" Height="270" Width="330" HorizontalContentAlignment="Stretch">
     <Viewbox>
-        <Grid Margin="0,0,3.2,0.4">
-            <Image Margin="83,10,87,60" Stretch="Fill" Source="/一丙英文背起來;component/Res/IF_ver2.png" VerticalAlignment="Top" Width="150" Height="200"/>
-            <Label Content="© 2019 Intelligent Future Co.,LTD" HorizontalAlignment="Left" Margin="10,230,0,0" VerticalAlignment="Top" FontSize="18"/>
+        <Grid>
+            <Label Content="© 劃破黑夜 2019" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" FontSize="18"/>
+            <Image Margin="85,71,85,3" Stretch="Fill" Source="/一丙英文背起來;component/Res/IF_ver2.png" Width="150" Height="150"/>
+            <Label Content="Project : Intelligent Future Co.,LTD" Margin="44,34,39,157" FontSize="14"/>
         </Grid>
     </Viewbox>
 </Window>

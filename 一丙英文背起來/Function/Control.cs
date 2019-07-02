@@ -67,6 +67,7 @@ namespace 一丙英文背起來
 
         public static void Set_Lv_res_list()
         {
+            ((MainWindow)Application.Current.MainWindow).lv_res_list.ItemsSource = null;
             ((MainWindow)Application.Current.MainWindow).lv_res_list.ItemsSource = App.LRC;
             ((MainWindow)Application.Current.MainWindow).lb_lsCount.Content = App.LRC.Count;
         }
@@ -79,9 +80,10 @@ namespace 一丙英文背起來
 
         private const uint WM_CLOSE = 0x0010;
 
-        public static void ShowAutoClosingMessageBox(string message, string caption, double second)
+        public static void ShowAutoClosingMessageBox(string message, string caption = "通知", double second = 3)
         {
             var timer = new System.Timers.Timer(second * 1000) { AutoReset = false };
+            // timer觸發時，關閉指定標題之視窗
             timer.Elapsed += delegate
             {
                 IntPtr hWnd = FindWindowByCaption(IntPtr.Zero, caption);

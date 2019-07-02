@@ -10,7 +10,7 @@ namespace 一丙英文背起來
     public static class WebServices {
         public static bool CheckVersion(double ClientVersion)
         {
-            /* 網路連線檢測 */
+            // 網路連線檢測
             if (WebRequestTest(App.Host))
             {
                 string url = App.Host + "/macros/s/AKfycbwErFMRlji8MTJzRLOhkSCxoctYFebWyk0wWh7CLfXDVXM8Bnc/exec";
@@ -27,7 +27,7 @@ namespace 一丙英文背起來
                         client.Encoding = Encoding.UTF8;
                         client.Headers.Add(HttpRequestHeader.ContentType, "application/x-www-form-urlencoded");
 
-                        /* 設定資料 -> 送出資料 -> JSON反序列化 */
+                        // 設定資料 -> 送出資料 -> JSON反序列化
                         NameValueCollection Postdata = new NameValueCollection();
                         Postdata.Add("ClientVersion", ClientVersion.ToString());
                         Webresponse = JsonConvert.DeserializeObject<JObject>(Encoding.UTF8.GetString(client.UploadValues(url, "POST", Postdata)));
@@ -43,7 +43,7 @@ namespace 一丙英文背起來
 
                     try
                     {
-                        /* 解析Server返回的JSON */
+                        // 解析Server返回的JSON
                         JObject Rtn_EngCram = JObject.Parse(Webresponse["Rtn_EngCram"].ToString());
                         if (Convert.ToDouble(Rtn_EngCram["ServerVersion"].ToString()) > ClientVersion)
                         {
