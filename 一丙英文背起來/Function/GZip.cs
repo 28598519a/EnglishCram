@@ -1,49 +1,52 @@
 ﻿using System.IO;
 using System.IO.Compression;
 
-public class GZip
+namespace 一丙英文背起來
 {
-    /// <summary>
-    /// GZIP解壓縮
-    /// </summary>
-    /// <param name="rawData">byte[]資料</param>
-    /// <returns>byte[]資料</returns>
-    public static byte[] Decompress(byte[] rawData)
+    public class GZip
     {
-        using (GZipStream decompressionStream = new GZipStream(new MemoryStream(rawData), CompressionMode.Decompress))
+        /// <summary>
+        /// GZIP解壓縮
+        /// </summary>
+        /// <param name="rawData">byte[]資料</param>
+        /// <returns>byte[]資料</returns>
+        public static byte[] Decompress(byte[] rawData)
         {
-            int size = 1024; //這邊訂多少都可以(下面有while)
-            byte[] buffer = new byte[size];
-            using (MemoryStream ms = new MemoryStream())
+            using (GZipStream decompressionStream = new GZipStream(new MemoryStream(rawData), CompressionMode.Decompress))
             {
-                int count = 0;
-                do
+                int size = 1024; //這邊訂多少都可以(下面有while)
+                byte[] buffer = new byte[size];
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    count = decompressionStream.Read(buffer, 0, size);
-                    if (count > 0)
+                    int count = 0;
+                    do
                     {
-                        ms.Write(buffer, 0, count);
-                    }
-                }while (count > 0);
+                        count = decompressionStream.Read(buffer, 0, size);
+                        if (count > 0)
+                        {
+                            ms.Write(buffer, 0, count);
+                        }
+                    } while (count > 0);
 
-                return ms.ToArray();
+                    return ms.ToArray();
+                }
             }
         }
-    }
 
-    /// <summary>
-    /// GZIP壓縮
-    /// </summary>
-    /// <param name="rawData">byte[]資料</param>
-    /// <returns>byte[]資料</returns>
-    public static byte[] Compress(byte[] rawData)
-    {
-        using (MemoryStream ms = new MemoryStream())
+        /// <summary>
+        /// GZIP壓縮
+        /// </summary>
+        /// <param name="rawData">byte[]資料</param>
+        /// <returns>byte[]資料</returns>
+        public static byte[] Compress(byte[] rawData)
         {
-            using (GZipStream compressedzipStream = new GZipStream(ms, CompressionMode.Compress, true))
+            using (MemoryStream ms = new MemoryStream())
             {
-                compressedzipStream.Write(rawData, 0, rawData.Length);
-                return ms.ToArray();
+                using (GZipStream compressedzipStream = new GZipStream(ms, CompressionMode.Compress, true))
+                {
+                    compressedzipStream.Write(rawData, 0, rawData.Length);
+                    return ms.ToArray();
+                }
             }
         }
     }

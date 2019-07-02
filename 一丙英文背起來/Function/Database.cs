@@ -33,10 +33,7 @@ namespace 一丙英文背起來
                             if (i.Equals(0)) return false;
                             i--;
                         }
-                        else
-                        {
-                            break;
-                        }
+                        else break;
                     }
                 }
                 if (((MainWindow)Application.Current.MainWindow).rb_Answer_Eng.IsChecked == true)

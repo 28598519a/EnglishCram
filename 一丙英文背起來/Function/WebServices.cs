@@ -12,7 +12,7 @@ using Newtonsoft.Json.Linq;
 
 namespace 一丙英文背起來
 {
-    public static class WebServices
+    public class WebServices
     {
         /// <summary>
         /// 版本檢查
@@ -224,6 +224,49 @@ namespace 一丙英文背起來
                 return enc.GetString(GetDecodedBytes(m.Groups["d"].Value).ToArray());
             }
             return encStr;
+        }
+
+        /// <summary>
+        /// 下載Google語音
+        /// </summary>
+        /// <param name="Text">輸入文字</param>
+        /// <param name="languageCode">語音的語言</param>
+        /// <returns>語音的保存位置</returns>
+        public static string GoogleTransVoice(string Text, LanguageCode.CommonCode languageCode = LanguageCode.CommonCode.en)
+        {
+            string voice = @"cache\" + Text + "_tts.mp3";
+            if (!File.Exists(voice))
+            {
+                string url = GoogleTransVoiceUrl(Text, languageCode);
+                DownLoadFile(url, @"cache\", Text + "_tts.mp3");
+            }
+            return voice;
+        }
+
+        /// <summary>
+        /// 組合出Google語音請求API
+        /// </summary>
+        /// <param name="Text">輸入文字</param>
+        /// <param name="languageCode">語音的語言</param>
+        /// <returns>語音URL</returns>
+        public static string GoogleTransVoiceUrl(string Text, LanguageCode.CommonCode languageCode = LanguageCode.CommonCode.en)
+        {
+            // 計算Google語音的tk驗證參數
+            GoogleTranslateToken.GoogleKeyTokenGenerator generator = new GoogleTranslateToken.GoogleKeyTokenGenerator();
+            string token = generator.Generate(Text);
+             
+            string TTSVoice = "https://translate.google.com/translate_tts?";
+            TTSVoice += "&ie=UTF-8";               // 輸入編碼
+            TTSVoice += "&q=" + Text;              // 輸入文字
+            TTSVoice += "&tl=" + languageCode;     // 輸出語言
+            TTSVoice += "&total=1";
+            TTSVoice += "&idx=0";
+            TTSVoice += "&textlen=" + Text.Length; // 輸入文字長度
+            TTSVoice += "&tk=" + token;           // 安全性驗證值
+            TTSVoice += "&client=webapp";
+            TTSVoice += "&prev=input";
+            //TTSVoice += "&ttsspeed = 0.24";       // 語音速度
+            return TTSVoice;
         }
     }
 }

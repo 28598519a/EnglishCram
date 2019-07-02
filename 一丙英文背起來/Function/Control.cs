@@ -5,7 +5,7 @@ using System.Windows;
 
 namespace 一丙英文背起來
 {
-    public static class Control
+    public class Control
     {
         /// <summary>
         /// 清理控件文字

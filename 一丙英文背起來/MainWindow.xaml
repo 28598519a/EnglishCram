@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:一丙英文背起來"
         mc:Ignorable="d"
-        Title="一丙英文背起來 ( Ver 1.6 )" Height="480" Width="750" Closed="Window_Closed">
+        Title="一丙英文背起來 ( Ver 1.7 )" Height="480" Width="750" Closed="Window_Closed">
     <Viewbox x:Name="ScreenAdaptive" Stretch="Fill">
         <Grid>
             <DockPanel VerticalAlignment="Top">
@@ -15,7 +15,7 @@
             </DockPanel>
             <Label Content="注意 : 非經直接授權使用者，請勿使用，否則必究" HorizontalAlignment="Left" Margin="350,-2,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
             <Label Content="更新：" HorizontalAlignment="Left" Margin="350,22,0,0" VerticalAlignment="Top"/>
-            <Label Content="1. BugFixes : 未載題庫被提示，並自動跳至資料庫頁面時，&#xA;                        記憶體占用無止盡飆升&#xA;2. BugFixes : 題目與顯示的題目不符&#xA;3. New Nuget : Net框架相容性分析套件" HorizontalAlignment="Left" Margin="397,22,0,0" VerticalAlignment="Top"/>
+            <Label Content="1. New : 由文字取得Google語音&#xA;2. New : 測驗中可播放該單字語音" HorizontalAlignment="Left" Margin="397,22,0,0" VerticalAlignment="Top"/>
 
             <TabControl Height="374" Margin="0,76,0,0" VerticalAlignment="Top" SelectedIndex="1" HorizontalAlignment="Left" Width="742" >
                 <TabItem Header="一般" Width="80">
@@ -43,6 +43,15 @@
                         <Label x:Name="lb_Again_count" Content="0" HorizontalAlignment="Left" Margin="115,117,0,0" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
                         <CheckBox x:Name="cb_AllowEnter" Content="允許Enter鍵送出" HorizontalAlignment="Left" Margin="553,214,0,0" VerticalAlignment="Top" IsChecked="True"/>
                         <CheckBox x:Name="cb_pfclim" Content="不包含已熟練項目" HorizontalAlignment="Left" Margin="552,307,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                        <Button x:Name="btn_PlayVoice" HorizontalAlignment="Left" Margin="378,36,0,0" VerticalAlignment="Top" Width="53" Height="25" Click="Btn_PlayVoice_Click" Visibility="Collapsed">
+                            <Button.Template>
+                                <ControlTemplate>
+                                    <Grid>
+                                        <Image Margin="2" Source="Res/voice_icon.png" Cursor="Hand"/>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
                     </Grid>
                 </TabItem>
                 <TabItem x:Name="tbi_db" Header="資料庫"  Width="80">

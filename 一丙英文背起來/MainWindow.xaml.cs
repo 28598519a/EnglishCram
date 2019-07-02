@@ -218,6 +218,8 @@ namespace 一丙英文背起來
                 btn_test_start.Visibility = Visibility.Hidden;
                 btn_test_stop.Visibility = Visibility.Visible;
 
+                btn_PlayVoice.Visibility = Visibility.Visible;
+
                 Control.Test(true);
                 tb_Answer.Focus();  // 跳至輸入框
 
@@ -259,6 +261,8 @@ namespace 一丙英文背起來
             // 結束測驗按鈕 -> 開始測驗按鈕
             btn_test_start.Visibility = Visibility.Visible;
             btn_test_stop.Visibility = Visibility.Hidden;
+
+            btn_PlayVoice.Visibility = Visibility.Collapsed;
 
             Control.ClearText();
             Control.Again(false);
@@ -498,6 +502,26 @@ namespace 一丙英文背起來
                 App.LRC[App.ResultList[App.Index]].Proficiency = 0;
             }
             Control.Set_Lv_res_list();
+        }
+
+        private void Btn_PlayVoice_Click(object sender, RoutedEventArgs e)
+        {
+            string text;
+            LanguageCode.CommonCode languagecode;
+            if (rb_Answer_Eng.IsChecked == true)
+            {
+                text = Database.Question.CleanInput(App.LRC[App.ResultList[App.Index]].NameEng.ToLower());
+                languagecode = LanguageCode.CommonCode.en;
+            }
+            else
+            {
+                text = Database.Question.CleanInput(App.LRC[App.ResultList[App.Index]].NameCht);
+                languagecode = LanguageCode.CommonCode.zh;
+            }
+
+            MP3Player mp3Player = new MP3Player();
+            mp3Player.FilePath = Path.Combine(App.Root, WebServices.GoogleTransVoice(text, languagecode));
+            mp3Player.Play();
         }
     }
 }

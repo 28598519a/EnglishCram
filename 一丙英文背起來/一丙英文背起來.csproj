@@ -82,7 +82,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Function\GoogleKeyTokenGenerator.cs" />
     <Compile Include="Function\LanguageCode.cs" />
+    <Compile Include="Function\MP3Player.cs" />
     <Compile Include="SubWindow\UpdateWindow.xaml.cs">
       <DependentUpon>UpdateWindow.xaml</DependentUpon>
     </Compile>
