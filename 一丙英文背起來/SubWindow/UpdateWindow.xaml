@@ -7,14 +7,10 @@
         mc:Ignorable="d"
         Title="更新通知" Height="300" Width="600" Closed="UpdateWindow_Closed">
     <Grid>
-        <Button x:Name="btn_ok" Content="知道了" HorizontalAlignment="Left" Margin="217,193,0,0" VerticalAlignment="Top" Width="135" Height="45" Click="Btn_ok_Click"/>
+        <Button x:Name="btn_ignore" Content="暫時忽略" HorizontalAlignment="Left" Margin="449,220,0,0" VerticalAlignment="Top" Width="80" Height="17" Click="Btn_ignore_Click"/>
         <Label x:Name="lb_ServerVersion" Content="最新版本號 : " HorizontalAlignment="Left" Margin="48,84,0,0" VerticalAlignment="Top" FontSize="16"/>
-        <Label x:Name="lb_ReleaseUrl" Content="下載點 :" HorizontalAlignment="Left" Margin="48,135,0,0" VerticalAlignment="Top" FontSize="16"/>
+        <Label x:Name="lb_ReleaseDate" Content="發佈日期 : " HorizontalAlignment="Left" Margin="48,135,0,0" VerticalAlignment="Top" FontSize="16"/>
         <Label Content="偵測到有可用的更新!" HorizontalAlignment="Left" Margin="179,30,0,0" VerticalAlignment="Top" FontSize="24" FontWeight="Bold"/>
-        <Label HorizontalAlignment="Left" Margin="114,135,0,0" VerticalAlignment="Top" FontSize="16">
-            <Hyperlink x:Name="hlk_ReleaseUrl" FontSize="16" MouseEnter="Hlk_MouseEnter" Foreground="Blue" MouseLeave="Hlk_MouseLeave" Click="Hlk_Click" NavigateUri="">
-                <TextBlock x:Name="tb_ReleaseUrl"></TextBlock>
-            </Hyperlink>
-        </Label>
+        <Button x:Name="btn_update" Content="更新" HorizontalAlignment="Left" Margin="224,192,0,0" VerticalAlignment="Top" Width="135" Height="45" Click="Btn_update_Click"/>
     </Grid>
 </Window>

@@ -152,35 +152,33 @@ namespace 一丙英文背起來
 
         public class Save
         {
-            public static bool As_db(string path)
+            public static void As_db(string path)
             {
                 path += ".db";
                 if (File.Exists(path))
                 {
                     MessageBoxResult dialogResult = System.Windows.MessageBox.Show("檔案已存在，是否覆蓋", "警告", MessageBoxButton.YesNo);
-                    if (dialogResult == MessageBoxResult.Yes)
+                    if (dialogResult == MessageBoxResult.No)
                     {
-                        byte[] List_bytes = Encoding.Unicode.GetBytes(LRC2txt());
-                        File.WriteAllBytes(path, GZip.Compress(List_bytes));
-                        return true;
+                        return;
                     }
                 }
-                return false;
+                byte[] List_bytes = Encoding.Unicode.GetBytes(LRC2txt());
+                File.WriteAllBytes(path, GZip.Compress(List_bytes));
             }
 
-            public static bool As_txt(string path)
+            public static void As_txt(string path)
             {
                 path += ".txt";
                 if (File.Exists(path))
                 {
                     MessageBoxResult dialogResult = System.Windows.MessageBox.Show("檔案已存在，是否覆蓋", "警告", MessageBoxButton.YesNo);
-                    if (dialogResult == MessageBoxResult.Yes)
+                    if (dialogResult == MessageBoxResult.No)
                     {
-                        File.WriteAllText(path, LRC2txt());
-                        return true;
+                        return;
                     }
                 }
-                return false;
+                File.WriteAllText(path, LRC2txt());
             }
 
             private static string LRC2txt()
@@ -195,7 +193,7 @@ namespace 一丙英文背起來
                 return list;
             }
 
-            public static bool As_excel(string path)
+            public static void As_excel(string path)
             {
                 // 呼叫Excel程式 且 不顯示
                 Excel.Application SrcExcelApp = new Excel.Application();
@@ -257,7 +255,6 @@ namespace 一丙英文背起來
                     System.Runtime.InteropServices.Marshal.FinalReleaseComObject(SrcExcelApp);
                     GC.Collect();
                 }
-                return true;
             }
         }
     }

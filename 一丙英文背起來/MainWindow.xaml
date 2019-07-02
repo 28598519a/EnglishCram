@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:一丙英文背起來"
         mc:Ignorable="d"
-        Title="一丙英文背起來 ( Ver 1.1 )" Height="450" Width="750" Closed="Window_Closed">
+        Title="一丙英文背起來 ( Ver 1.2 )" Height="450" Width="750" Closed="Window_Closed">
     <Viewbox x:Name="ScreenAdaptive" Stretch="Fill">
         <Grid>
             <DockPanel>
@@ -16,7 +16,7 @@
             </DockPanel>
             <Label Content="注意 : 非經直接授權使用者，請勿使用，否則必究" HorizontalAlignment="Left" Margin="350,-2,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
             <Label Content="更新：" HorizontalAlignment="Left" Margin="350,22,0,0" VerticalAlignment="Top"/>
-            <Label Content="1. BugFixes : 存檔選不覆蓋已存在的Excel檔導致閃退及程序殘留&#xA;2. New : 優化了版權相關說明&#xA;3. New : 會針對你的練習情形計算熟練度&#xA;4. New : 可以在任何時刻直接導出資料庫資料" HorizontalAlignment="Left" Margin="397,22,0,0" VerticalAlignment="Top"/>
+            <Label Content="1. BugFixes : db及txt只有在已存在時才能被導出&#xA;2. BugFixes : 缺少更新資料導致失敗時，未開啟主畫面且程序殘留&#xA;3. New : 不需再透過超連結+瀏覽器下載更新檔&#xA;4. New : 更新畫面會顯示最新版本釋出之日期" HorizontalAlignment="Left" Margin="397,22,0,0" VerticalAlignment="Top"/>
 
             <TabControl x:Name="tbc_main" Height="344" Margin="0,76,0,0" VerticalAlignment="Top" SelectedIndex="1" HorizontalAlignment="Left" Width="742" >
                 <TabItem Header="一般" Width="80">
