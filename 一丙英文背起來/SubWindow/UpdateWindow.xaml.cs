@@ -45,7 +45,7 @@ namespace 一丙英文背起來
         /// <param name="e">路由事件</param>
         private void Btn_update_Click(object sender, RoutedEventArgs e)
         {
-            WebServices.DownLoadFile(DownLoadUrl, App.Root, false);
+            WebServices.DownLoadFile(DownLoadUrl, App.Root);
             Close();
         }
 

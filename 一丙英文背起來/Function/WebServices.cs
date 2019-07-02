@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Net;
-using System.Text;
-using System.Collections.Specialized;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.IO;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
 using System.Globalization;
 using System.Linq;
+using System.Net;
+using System.Text;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace 一丙英文背起來
 {
@@ -100,9 +100,29 @@ namespace 一丙英文背起來
         /// <param name="downPath">下載網址</param>
         /// <param name="saveFolder">保存的目錄</param>
         /// <param name="overWrite">覆寫</param>
-        public static void DownLoadFile(string downPath, string saveFolder, bool overWrite)
+        public static void DownLoadFile(string downPath, string saveFolder, bool overWrite = false)
         {
-            string savePath = saveFolder + "\\" + GetDownFileName(downPath);
+            DownLoadFile(downPath, saveFolder, null, overWrite);
+        }
+
+        /// <summary>
+        /// 下載檔案
+        /// </summary>
+        /// <param name="downPath">下載網址</param>
+        /// <param name="saveFolder">保存的目錄</param>
+        /// <param name="saveName">自訂檔名</param>
+        /// <param name="overWrite">覆寫</param>
+        public static void DownLoadFile(string downPath, string saveFolder, string saveName, bool overWrite = false)
+        {
+            string savePath;
+            if (saveName.Equals(null))
+            {
+                savePath = Path.Combine(saveFolder, GetDownFileName(downPath));
+            }
+            else
+            {
+                savePath = Path.Combine(saveFolder, saveName);
+            }
 
             if (!Directory.Exists(Path.GetDirectoryName(savePath)))
                 Directory.CreateDirectory(Path.GetDirectoryName(savePath));
@@ -120,7 +140,7 @@ namespace 一丙英文背起來
                 {
                     System.Windows.MessageBox.Show(ex.Message.ToString());
                 }
-            } 
+            }
         }
 
         /// <summary>

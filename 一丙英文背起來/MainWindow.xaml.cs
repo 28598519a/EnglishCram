@@ -4,7 +4,6 @@ using System.Linq;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Controls;
 
 namespace 一丙英文背起來
 {
@@ -50,7 +49,7 @@ namespace 一丙英文背起來
             }
             catch
             {
-                File.Delete(App.Root + "\\UserSetting.ini");
+                File.Delete(Path.Combine(App.Root, "UserSetting.ini"));
                 System.Windows.MessageBox.Show("設定讀取失敗" + Environment.NewLine + "執行部分設定初始化...", "異常");
             }
 
@@ -85,6 +84,12 @@ namespace 一丙英文背起來
 
             // 保存設定
             LoadSetting.SaveSetting();
+
+            // 清理暫存
+            if (Directory.Exists("cache"))
+            {
+                Directory.Delete("cache", true);
+            }
         }
 
         /// <summary>
@@ -239,7 +244,8 @@ namespace 一丙英文背起來
             else
             {
                 System.Windows.MessageBox.Show("請載入題庫","提示");
-                tbc_main.SelectedItem = tbi_db;
+                // 注意 : 用其他方式如focus()等，跳轉會導致動態記憶體異常
+                tbi_db.IsSelected = true; 
             }
         }
 
@@ -492,57 +498,6 @@ namespace 一丙英文背起來
                 App.LRC[App.ResultList[App.Index]].Proficiency = 0;
             }
             Control.Set_Lv_res_list();
-        }
-
-        /// <summary>
-        /// 網頁加載完成
-        /// </summary>
-        /// <param name="sender">委託</param>
-        /// <param name="e">瀏覽事件</param>
-        private void Wb_live2d_LoadCompleted(object sender, System.Windows.Navigation.NavigationEventArgs e)
-        {
-            string script1 = "document.body.style.overflow ='hidden'";     //關閉Scrollbar
-            string script2 = "document.body.style.zoom ='50%'";            //調整網頁內容大小
-            WebBrowser wb = (WebBrowser)sender;
-            wb.InvokeScript("execScript", new Object[] { script1, "JavaScript" });
-            wb.InvokeScript("execScript", new Object[] { script2, "JavaScript" });
-        }
-
-        /// <summary>
-        /// Live2D選擇黑貓
-        /// </summary>
-        /// <param name="sender">委託</param>
-        /// <param name="e">路由事件</param>
-        private void Rb_Live2d_nekob_Checked(object sender, RoutedEventArgs e)
-        {
-            Callneko("http://28598519a.github.io/l2d-neko-black");
-        }
-
-        /// <summary>
-        /// Live2D選擇白貓
-        /// </summary>
-        /// <param name="sender">委託</param>
-        /// <param name="e">路由事件</param>
-        private void Rb_Live2d_nekow_Checked(object sender, RoutedEventArgs e)
-        {
-            Callneko("http://28598519a.github.io/l2d-neko-white");
-        }
-
-        /// <summary>
-        /// 嘗試加載網頁內容
-        /// </summary>
-        /// <param name="url">網址</param>
-        private void Callneko(string url)
-        {
-            if (WebServices.WebRequestTest(url))
-            {
-                wb_live2d.Navigate(url);
-                wb_live2d.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                wb_live2d.Visibility = Visibility.Collapsed;
-            }
         }
     }
 }

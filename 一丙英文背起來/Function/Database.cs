@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
 using Excel = Microsoft.Office.Interop.Excel; //Define為Excel，以避免Application名稱衝突
 
 namespace 一丙英文背起來
@@ -41,8 +40,8 @@ namespace 一丙英文背起來
                     }
                 }
                 if (((MainWindow)Application.Current.MainWindow).rb_Answer_Eng.IsChecked == true)
-                    ((MainWindow)Application.Current.MainWindow).lb_Question.Content = App.LRC[App.ResultList.ToList()[App.Index]].NameCht;
-                else ((MainWindow)Application.Current.MainWindow).lb_Question.Content = App.LRC[App.ResultList.ToList()[App.Index]].NameEng;
+                    ((MainWindow)Application.Current.MainWindow).lb_Question.Content = App.LRC[App.ResultList.ToList()[App.Index]].NameEng;
+                else ((MainWindow)Application.Current.MainWindow).lb_Question.Content = App.LRC[App.ResultList.ToList()[App.Index]].NameCht;
                 return true;
             }
 

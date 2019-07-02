@@ -14,7 +14,7 @@ namespace 一丙英文背起來
         public static string Host = "https://script.google.com";
         public static int Index = 0;
         public static int Again_Count = 0;
-        public static double CurrentVersion = 1.5;
+        public static double CurrentVersion = 1.6;
         public static List<int> ResultList;
         public static List<ResCless> LRC = new List<ResCless>();
 
