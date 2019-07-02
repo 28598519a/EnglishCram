@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 
 namespace 一丙英文背起來
@@ -11,11 +12,11 @@ namespace 一丙英文背起來
     public partial class App : Application
     {
         public static string Root = Environment.CurrentDirectory;
-        public static string FileRoot = Root + "\\Default.db";
+        public static string FileRoot = Path.Combine(Root, "Default.db");
         public static string Host = "https://script.google.com";
         public static int Index = 0;
         public static int Again_Count = 0;
-        public static double CurrentVersion = 1.8;
+        public static double CurrentVersion = 1.9;
         public static List<int> ResultList;
         public static List<ResCless> LRC = new List<ResCless>();
 

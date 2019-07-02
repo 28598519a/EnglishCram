@@ -71,7 +71,7 @@ namespace 一丙英文背起來
             /// 函數名: fo
             /// 備註: if (null !== eo) var b = eo;
             /// </summary>
-            public bool IsExternalKeyObsolete => CurrentKey.Time != UtcTotalHours;
+            public bool IsTokenKeyObsolete => CurrentKey.Time != UtcTotalHours;
 
             /// <summary>
             /// 最長等待時間
@@ -89,11 +89,11 @@ namespace 一丙英文背起來
             /// <returns>Token值</returns>
             public virtual async Task<string> GenerateAsync(string source)
             {
-                if (IsExternalKeyObsolete)
+                if (IsTokenKeyObsolete)
                     try
                     {
                         // 得使用 ConfigureAwait(false) 不然線程會鎖死
-                        CurrentKey = await GetNewExternalKeyAsync().ConfigureAwait(false);
+                        CurrentKey = await GetNewTokenKeyAsync().ConfigureAwait(false);
                     }
                     catch (TokenKeyParseException)
                     {
@@ -114,7 +114,7 @@ namespace 一丙英文背起來
             /// </summary>
             /// <param name="source">輸入文字</param>
             /// <returns>token後半段</returns>
-            protected virtual async Task<TokenKey> GetNewExternalKeyAsync()
+            protected virtual async Task<TokenKey> GetNewTokenKeyAsync()
             {
                 HttpClient httpClient = new HttpClient();
                 httpClient.Timeout = TimeOut;
@@ -172,8 +172,8 @@ namespace 一丙英文背起來
                 }
 
                 // tkk[0]經測試為Number(new Date().getTime()/3600000)；tkk[1]不確定，先直接請求html
-                TokenKey newExternalKey = new TokenKey(UtcTotalHours, tkk);
-                return newExternalKey;
+                TokenKey newTokenKey = new TokenKey(UtcTotalHours, tkk);
+                return newTokenKey;
             }
 
             /// <summary>

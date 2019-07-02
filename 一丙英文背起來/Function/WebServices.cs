@@ -57,6 +57,7 @@ namespace 一丙英文背起來
                     {
                         UpdateWindow UWindow = new UpdateWindow();
                         UWindow.SetUpdateLabel(Rtn_EngCram["ServerVersion"].ToString(), Rtn_EngCram["ReleaseUrl"].ToString(), Rtn_EngCram["ReleaseDate"].ToString());
+                        UWindow.ProgramName = Rtn_EngCram["MainName"].ToString();
                         Control.MainVisibility(false);
                         UWindow.Show();
                         return true;
@@ -101,9 +102,9 @@ namespace 一丙英文背起來
         /// <param name="downPath">下載網址</param>
         /// <param name="saveFolder">保存的目錄</param>
         /// <param name="overWrite">覆寫</param>
-        public static string DownLoadFile(string downPath, string saveFolder, bool overWrite = false)
+        public static string DownLoadFile(string downPath, string saveFolder, bool showbar = false, bool overWrite = false)
         {
-            return DownLoadFile(downPath, saveFolder, String.Empty, overWrite);
+            return DownLoadFile(downPath, saveFolder, String.Empty, showbar, overWrite);
         }
 
         /// <summary>
@@ -112,8 +113,9 @@ namespace 一丙英文背起來
         /// <param name="downPath">下載網址</param>
         /// <param name="saveFolder">保存的目錄</param>
         /// <param name="saveName">自訂檔名</param>
+        /// <param name="showbar">顯示進度條</param>
         /// <param name="overWrite">覆寫</param>
-        public static string DownLoadFile(string downPath, string saveFolder, string saveName, bool overWrite = false)
+        public static string DownLoadFile(string downPath, string saveFolder, string saveName, bool showbar = false, bool overWrite = false)
         {
             string savePath;
             string downfilename = GetDownFileName(downPath);
@@ -130,13 +132,24 @@ namespace 一丙英文背起來
                 Directory.CreateDirectory(Path.GetDirectoryName(savePath));
 
             if (File.Exists(savePath) && overWrite == false)
-                return String.Empty;
+                return Path.GetFileName(savePath);
 
             using (WebClient wc = new WebClient())
             {
                 try
                 {
-                    wc.DownloadFile(downPath, savePath);
+                    if (showbar.Equals(false))
+                    {
+                        wc.DownloadFile(downPath, savePath);
+                    }
+                    else
+                    {
+                        DownloadWindow downloadWindow = new DownloadWindow();
+                        downloadWindow.DownPath = downPath;
+                        downloadWindow.SavePath = savePath;
+                        // 下載完成才繼續執行後續動作，用ShowDialog()阻塞線程
+                        downloadWindow.ShowDialog();
+                    }
                 }
                 catch (Exception ex)
                 {

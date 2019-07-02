@@ -15,7 +15,7 @@ namespace 一丙英文背起來
         /// </summary>
         public static void Init_Setting()
         {
-            if (File.Exists($"{App.Root}\\{IniFileName}"))
+            if (File.Exists(Path.Combine(App.Root, IniFileName)))
             {
                 ReadSetting();
             }
@@ -91,7 +91,7 @@ namespace 一丙英文背起來
             /// <param name="inipath">ini路徑</param>
             public void IniWriteValue(string Section, string Key, string Value, string inipath)
             {
-                SafeNativeMethods.WritePrivateProfileString(Section, Key, Value, App.Root + "\\" + inipath);
+                SafeNativeMethods.WritePrivateProfileString(Section, Key, Value, Path.Combine(App.Root, inipath));
             }
 
             /// <summary>
@@ -104,7 +104,7 @@ namespace 一丙英文背起來
             public string IniReadValue(string Section, string Key, string inipath)
             {
                 StringBuilder temp = new StringBuilder(255);
-                int i = SafeNativeMethods.GetPrivateProfileString(Section, Key, string.Empty, temp, 255, App.Root + "\\" + inipath);
+                int i = SafeNativeMethods.GetPrivateProfileString(Section, Key, string.Empty, temp, 255, Path.Combine(App.Root, inipath));
                 return temp.ToString();
             }
         }

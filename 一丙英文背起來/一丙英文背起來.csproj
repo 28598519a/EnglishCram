@@ -83,6 +83,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Function\Compress\Zip.cs" />
     <Compile Include="Function\Database\Load.cs" />
     <Compile Include="Function\Database\Question.cs" />
     <Compile Include="Function\GoogleTranslateToken\TokenKeyParseException.cs" />
@@ -90,6 +91,9 @@
     <Compile Include="Function\GoogleTranslateToken\GoogleTranslateIPBannedException.cs" />
     <Compile Include="Function\LanguageCode.cs" />
     <Compile Include="Function\MP3Player.cs" />
+    <Compile Include="SubWindow\DownloadWindow.xaml.cs">
+      <DependentUpon>DownloadWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SubWindow\UpdateWindow.xaml.cs">
       <DependentUpon>UpdateWindow.xaml</DependentUpon>
     </Compile>
@@ -114,6 +118,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="SubWindow\DownloadWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SubWindow\UpdateWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

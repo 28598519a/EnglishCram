@@ -504,6 +504,11 @@ namespace 一丙英文背起來
             Control.Set_Lv_res_list();
         }
 
+        /// <summary>
+        /// 播放發音
+        /// </summary>
+        /// <param name="sender">委託</param>
+        /// <param name="e">路由事件</param>
         private void Btn_PlayVoice_Click(object sender, RoutedEventArgs e)
         {
             string text;
