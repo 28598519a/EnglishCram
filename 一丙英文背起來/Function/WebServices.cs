@@ -14,9 +14,13 @@ namespace 一丙英文背起來
 {
     public static class WebServices
     {
+        /// <summary>
+        /// 版本檢查
+        /// </summary>
+        /// <param name="ClientVersion">版本號</param>
+        /// <returns>有新版本</returns>
         public static bool CheckVersion(double ClientVersion)
         {
-            // 網路連線檢測
             if (WebRequestTest(App.Host))
             {
                 string url = App.Host + "/macros/s/AKfycbwErFMRlji8MTJzRLOhkSCxoctYFebWyk0wWh7CLfXDVXM8Bnc/exec";
@@ -42,28 +46,24 @@ namespace 一丙英文背起來
                     {
                         System.Windows.MessageBox.Show(ex.Message.ToString());
                     }
-                    finally
-                    {
-                        client.Dispose();
-                    }
+                }
 
-                    try
+                try
+                {
+                    // 解析Server返回的JSON
+                    JObject Rtn_EngCram = JObject.Parse(Webresponse["Rtn_EngCram"].ToString());
+                    if (Convert.ToDouble(Rtn_EngCram["ServerVersion"].ToString()) > ClientVersion)
                     {
-                        // 解析Server返回的JSON
-                        JObject Rtn_EngCram = JObject.Parse(Webresponse["Rtn_EngCram"].ToString());
-                        if (Convert.ToDouble(Rtn_EngCram["ServerVersion"].ToString()) > ClientVersion)
-                        {
-                            UpdateWindow UWindow = new UpdateWindow();
-                            UWindow.SetUpdateLabel(Rtn_EngCram["ServerVersion"].ToString(), Rtn_EngCram["ReleaseUrl"].ToString(), Rtn_EngCram["ReleaseDate"].ToString());
-                            Control.MainVisibility(false);
-                            UWindow.Show();
-                            return true;
-                        }
+                        UpdateWindow UWindow = new UpdateWindow();
+                        UWindow.SetUpdateLabel(Rtn_EngCram["ServerVersion"].ToString(), Rtn_EngCram["ReleaseUrl"].ToString(), Rtn_EngCram["ReleaseDate"].ToString());
+                        Control.MainVisibility(false);
+                        UWindow.Show();
+                        return true;
                     }
-                    catch (Exception ex)
-                    {
-                        System.Windows.MessageBox.Show(ex.Message.ToString());
-                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show(ex.Message.ToString());
                 }
             }
             else
@@ -75,6 +75,11 @@ namespace 一丙英文背起來
             return false;
         }
 
+        /// <summary>
+        /// 網路連線檢測
+        /// </summary>
+        /// <param name="url">網址</param>
+        /// <returns>可連線</returns>
         public static bool WebRequestTest(string url)
         {
             try
@@ -89,6 +94,12 @@ namespace 一丙英文背起來
             return true;
         }
 
+        /// <summary>
+        /// 下載檔案
+        /// </summary>
+        /// <param name="downPath">下載網址</param>
+        /// <param name="saveFolder">保存的目錄</param>
+        /// <param name="overWrite">覆寫</param>
         public static void DownLoadFile(string downPath, string saveFolder, bool overWrite)
         {
             string savePath = saveFolder + "\\" + GetDownFileName(downPath);
@@ -112,6 +123,11 @@ namespace 一丙英文背起來
             } 
         }
 
+        /// <summary>
+        /// 取得下載檔案的名稱
+        /// </summary>
+        /// <param name="downPath">下載網址</param>
+        /// <returns>下載檔案的名稱</returns>
         private static string GetDownFileName(string downPath)
         {
             using (WebClient wc = new WebClient())
@@ -144,6 +160,12 @@ namespace 一丙英文背起來
             }
         }
 
+        /// <summary>
+        /// RFC5987解碼器
+        /// 參考: https://github.com/grumpydev/RFC5987-Decoder
+        /// </summary>
+        /// <param name="encData">加密資料</param>
+        /// <returns>解密資料</returns>
         private static IEnumerable<byte> GetDecodedBytes(string encData)
         {
             var encChars = encData.ToCharArray();
@@ -155,9 +177,7 @@ namespace 一丙英文背起來
 
                     i += 2;
 
-                    int characterValue;
-                    if (int.TryParse(hexString, NumberStyles.HexNumber,
-                        CultureInfo.InvariantCulture, out characterValue))
+                    if (int.TryParse(hexString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int characterValue))
                     {
                         yield return (byte)characterValue;
                     }
@@ -169,12 +189,17 @@ namespace 一丙英文背起來
             }
         }
 
+        /// <summary>
+        /// 解密RFC5987標準定義的header加密
+        /// </summary>
+        /// <param name="encStr">加密內容</param>
+        /// <returns>解密內容</returns>
         private static string DecodeRF5987(string encStr)
         {
             Match m = Regex.Match(encStr, "^(?<e>.+)'(?<l>.*)'(?<d>[^;]+)$");
             if (m.Success)
             {
-                //TODO: 此處未包含伺服器傳回資料有誤之容錯處理
+                //注意 : 此處未包含伺服器傳回資料有誤之容錯處理
                 var enc = Encoding.GetEncoding(m.Groups["e"].Value);
                 return enc.GetString(GetDecodedBytes(m.Groups["d"].Value).ToArray());
             }

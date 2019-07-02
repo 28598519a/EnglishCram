@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
 
 namespace 一丙英文背起來
@@ -8,6 +9,10 @@ namespace 一丙英文背起來
     {
         public static SetupIniIP ini = new SetupIniIP();
         public static string IniFileName = "UserSetting.ini";
+
+        /// <summary>
+        /// 讀取設定檔
+        /// </summary>
         public static void Init_Setting()
         {
             if (File.Exists($"{App.Root}\\{IniFileName}"))
@@ -21,6 +26,9 @@ namespace 一丙英文背起來
             }
         }
 
+        /// <summary>
+        /// 設定 設定檔的初值
+        /// </summary>
         private static void SetDefault()
         {
             ini.IniWriteValue("Setting", "rb_Answer_Eng", "True", IniFileName);
@@ -32,6 +40,9 @@ namespace 一丙英文背起來
             ini.IniWriteValue("Setting", "cb_pfclim", "True", IniFileName);
         }
 
+        /// <summary>
+        /// 讀取設定檔的值
+        /// </summary>
         private static void ReadSetting()
         {
             App.Set_rb_Answer_Eng = ini.IniReadValue("Setting", "rb_Answer_Eng", IniFileName);
@@ -43,6 +54,9 @@ namespace 一丙英文背起來
             App.Set_cb_pfclim = ini.IniReadValue("Setting", "cb_pfclim", IniFileName);
         }
 
+        /// <summary>
+        /// 保存值進設定檔
+        /// </summary>
         public static void SaveSetting()
         {
             ini.IniWriteValue("Setting", "rb_Answer_Eng", App.Set_rb_Answer_Eng, IniFileName);
@@ -58,21 +72,27 @@ namespace 一丙英文背起來
         {
             public string path;
 
-            [DllImport("kernel32", CharSet = CharSet.Unicode)]
-            private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
+            [SuppressUnmanagedCodeSecurity]
+            internal static class SafeNativeMethods
+            {
+                [DllImport("kernel32", CharSet = CharSet.Unicode)]
+                internal static extern bool WritePrivateProfileString(string section, string key, string val, string filePath);
 
-            [DllImport("kernel32", CharSet = CharSet.Unicode)]
-            private static extern int GetPrivateProfileString(string section, string key, string def, StringBuilder retVal, int size, string filePath);
+
+                [DllImport("kernel32", CharSet = CharSet.Unicode)]
+                internal static extern int GetPrivateProfileString(string section, string key, string def, StringBuilder retVal, int size, string filePath);
+
+            }
 
             public void IniWriteValue(string Section, string Key, string Value, string inipath)
             {
-                WritePrivateProfileString(Section, Key, Value, App.Root + "\\" + inipath);
+                SafeNativeMethods.WritePrivateProfileString(Section, Key, Value, App.Root + "\\" + inipath);
             }
 
             public string IniReadValue(string Section, string Key, string inipath)
             {
                 StringBuilder temp = new StringBuilder(255);
-                int i = GetPrivateProfileString(Section, Key, string.Empty, temp, 255, App.Root + "\\" + inipath);
+                int i = SafeNativeMethods.GetPrivateProfileString(Section, Key, string.Empty, temp, 255, App.Root + "\\" + inipath);
                 return temp.ToString();
             }
         }

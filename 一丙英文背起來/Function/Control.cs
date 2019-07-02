@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Windows;
 
 namespace 一丙英文背起來
 {
     public static class Control
     {
+        /// <summary>
+        /// 清理控件文字
+        /// </summary>
         public static void ClearText()
         {
             ((MainWindow)Application.Current.MainWindow).lb_Question.Content = string.Empty;
@@ -14,18 +18,29 @@ namespace 一丙英文背起來
             ((MainWindow)Application.Current.MainWindow).tb_Again.Text = string.Empty;
         }
 
+        /// <summary>
+        /// 測驗相關控件
+        /// </summary>
+        /// <param name="IsEnabled">啟用</param>
         public static void Test(bool IsEnabled)
         {
             ((MainWindow)Application.Current.MainWindow).tb_Answer.IsEnabled = IsEnabled;
             ((MainWindow)Application.Current.MainWindow).btn_Answer.IsEnabled = IsEnabled;
         }
 
+        /// <summary>
+        /// 練習相關控件
+        /// </summary>
+        /// <param name="IsEnabled">啟用</param>
         public static void Again(bool IsEnabled)
         {
             ((MainWindow)Application.Current.MainWindow).tb_Again.IsEnabled = IsEnabled;
             ((MainWindow)Application.Current.MainWindow).btn_Again.IsEnabled = IsEnabled;
         }
 
+        /// <summary>
+        /// 結束練習
+        /// </summary>
         public static void EndExercise()
         {
             Again(false);
@@ -35,6 +50,10 @@ namespace 一丙英文背起來
             Test(true);
         }
 
+        /// <summary>
+        /// 顯示主程式視窗
+        /// </summary>
+        /// <param name="show">顯示</param>
         public static void MainVisibility(bool show)
         {
             if (show)
@@ -47,6 +66,9 @@ namespace 一丙英文背起來
             }
         }
 
+        /// <summary>
+        /// 列表寬度自適應
+        /// </summary>
         public static void Lv_res_list_autowidth()
         {
             /*
@@ -65,6 +87,9 @@ namespace 一丙英文背起來
             }
         }
 
+        /// <summary>
+        /// 從全域變數導入列表
+        /// </summary>
         public static void Set_Lv_res_list()
         {
             ((MainWindow)Application.Current.MainWindow).lv_res_list.ItemsSource = null;
@@ -72,22 +97,38 @@ namespace 一丙英文背起來
             ((MainWindow)Application.Current.MainWindow).lb_lsCount.Content = App.LRC.Count;
         }
 
-        [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
-        private static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
+        [SuppressUnmanagedCodeSecurity]
+        internal static class SafeNativeMethods
+        {
+            /// <summary>
+            /// 由視窗名稱找到視窗
+            /// </summary>
+            [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true, CharSet = CharSet.Unicode)]
+            internal static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
 
-        [DllImport("user32.Dll")]
-        private static extern int PostMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
+            /// <summary>
+            /// 傳送委託給視窗
+            /// </summary>
+            [DllImport("user32.Dll", CharSet = CharSet.Unicode)]
+            internal static extern int PostMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
+        }
 
         private const uint WM_CLOSE = 0x0010;
 
+        /// <summary>
+        /// 可定時關閉的MessageBox
+        /// </summary>
+        /// <param name="message">顯示的內容</param>
+        /// <param name="caption">標題</param>
+        /// <param name="second">秒數</param>
         public static void ShowAutoClosingMessageBox(string message, string caption = "通知", double second = 3)
         {
             var timer = new System.Timers.Timer(second * 1000) { AutoReset = false };
             // timer觸發時，關閉指定標題之視窗
             timer.Elapsed += delegate
             {
-                IntPtr hWnd = FindWindowByCaption(IntPtr.Zero, caption);
-                if (hWnd.ToInt32() != 0) PostMessage(hWnd, WM_CLOSE, 0, 0);
+                IntPtr hWnd = SafeNativeMethods.FindWindowByCaption(IntPtr.Zero, caption);
+                if (hWnd.ToInt32() != 0) SafeNativeMethods.PostMessage(hWnd, WM_CLOSE, 0, 0);
             };
             timer.Enabled = true;
             MessageBox.Show(message, caption);

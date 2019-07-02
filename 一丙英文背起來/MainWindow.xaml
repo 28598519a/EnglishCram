@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:一丙英文背起來"
         mc:Ignorable="d"
-        Title="一丙英文背起來 ( Ver 1.4 )" Height="480" Width="750" Closed="Window_Closed">
+        Title="一丙英文背起來 ( Ver 1.5 )" Height="480" Width="750" Closed="Window_Closed">
     <Viewbox x:Name="ScreenAdaptive" Stretch="Fill">
         <Grid>
             <DockPanel VerticalAlignment="Top">
@@ -15,7 +15,7 @@
             </DockPanel>
             <Label Content="注意 : 非經直接授權使用者，請勿使用，否則必究" HorizontalAlignment="Left" Margin="350,-2,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
             <Label Content="更新：" HorizontalAlignment="Left" Margin="350,22,0,0" VerticalAlignment="Top"/>
-            <Label Content="1. BugFixes : 公告區域可被輸入文字&#xA;2. New : 增加了一隻可互動的貓 (by Live2D-WebGL)&#xA;3. New : 所有設定統一移至設定區域統一管理&#xA;4. 通知 : 於1.6版本時，部分項目會回歸1.3版本" HorizontalAlignment="Left" Margin="397,22,0,0" VerticalAlignment="Top"/>
+            <Label Content="1. BugFixes : 全部都熟練後會閃退&#xA;2. New : 增加了另一隻可互動的貓 (by Live2D-WebGL)&#xA;3. New : 程式碼安全性修正&#xA;4. 通知 : 於1.6版本時，部分項目會回歸1.3版本" HorizontalAlignment="Left" Margin="397,22,0,0" VerticalAlignment="Top"/>
 
             <TabControl x:Name="tbc_main" Height="374" Margin="0,76,0,0" VerticalAlignment="Top" SelectedIndex="1" HorizontalAlignment="Left" Width="742" >
                 <TabItem Header="一般" Width="80">
@@ -62,7 +62,7 @@
                 <TabItem Header="程式設定" Width="80">
                     <Grid Background="#FFE5E5E5" Margin="0,0,-0.2,0.4">
                         <GroupBox Header="測驗選項" HorizontalAlignment="Left" Height="64" Margin="20,38,0,0" VerticalAlignment="Top" Width="185" FontSize="14" Foreground="Black"/>
-                        <RadioButton GroupName="AnswerType" x:Name="rb_Answer_Cht" Content="回答中文" HorizontalAlignment="Left" Margin="34,58,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                        <RadioButton GroupName="AnswerType" x:Name="rb_Answer_Cht" Content="回答中文" HorizontalAlignment="Left" Margin="34,58,0,0" VerticalAlignment="Top"/>
                         <RadioButton GroupName="AnswerType" x:Name="rb_Answer_Eng" Content="回答英文" HorizontalAlignment="Left" Margin="111,58,0,0" VerticalAlignment="Top" IsChecked="True"/>
                         <CheckBox x:Name="cb_AllowEnter" Content="允許Enter鍵送出" HorizontalAlignment="Left" Margin="34,77,0,0" VerticalAlignment="Top" IsChecked="True"/>
                         <GroupBox Header="出題模式" HorizontalAlignment="Left" Height="64" Margin="21,126,0,0" VerticalAlignment="Top" Width="185" FontSize="14"/>
@@ -79,6 +79,9 @@
                         <RadioButton GroupName="FileFormat" x:Name="rb_fmt_txt" Content="txt" HorizontalAlignment="Left" Margin="616,77,0,0" VerticalAlignment="Top"/>
                         <RadioButton GroupName="FileFormat" x:Name="rb_fmt_xlsx" Content="xlsx" HorizontalAlignment="Left" Margin="655,77,0,0" VerticalAlignment="Top"/>
                         <Label Content="格式 :" HorizontalAlignment="Left" Margin="537,71,0,0" VerticalAlignment="Top"/>
+                        <GroupBox Header="貓Live2D選擇" HorizontalAlignment="Left" Height="75" Margin="21,215,0,0" VerticalAlignment="Top" Width="185" FontSize="14" Foreground="Black"/>
+                        <RadioButton GroupName="Live2DType" x:Name="rb_Live2d_nekob" Content="黑貓 (ひじき)" HorizontalAlignment="Left" Margin="35,245,0,0" VerticalAlignment="Top" IsChecked="True" Checked="Rb_Live2d_nekob_Checked"/>
+                        <RadioButton GroupName="Live2DType" x:Name="rb_Live2d_nekow" Content="白貓 (とろろ)" HorizontalAlignment="Left" Margin="35,266,0,0" VerticalAlignment="Top" Checked="Rb_Live2d_nekow_Checked"/>
                     </Grid>
                 </TabItem>
             </TabControl>

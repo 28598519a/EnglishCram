@@ -3,6 +3,11 @@ using System.IO.Compression;
 
 public class GZip
 {
+    /// <summary>
+    /// GZIP解壓縮
+    /// </summary>
+    /// <param name="rawData">byte[]資料</param>
+    /// <returns>byte[]資料</returns>
     public static byte[] Decompress(byte[] rawData)
     {
         using (GZipStream decompressionStream = new GZipStream(new MemoryStream(rawData), CompressionMode.Decompress))
@@ -21,12 +26,16 @@ public class GZip
                     }
                 }while (count > 0);
 
-                ms.Close();
                 return ms.ToArray();
             }
         }
     }
 
+    /// <summary>
+    /// GZIP壓縮
+    /// </summary>
+    /// <param name="rawData">byte[]資料</param>
+    /// <returns>byte[]資料</returns>
     public static byte[] Compress(byte[] rawData)
     {
         using (MemoryStream ms = new MemoryStream())
@@ -34,7 +43,6 @@ public class GZip
             using (GZipStream compressedzipStream = new GZipStream(ms, CompressionMode.Compress, true))
             {
                 compressedzipStream.Write(rawData, 0, rawData.Length);
-                compressedzipStream.Close();
                 return ms.ToArray();
             }
         }

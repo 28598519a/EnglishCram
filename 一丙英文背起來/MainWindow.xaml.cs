@@ -55,13 +55,13 @@ namespace 一丙英文背起來
             }
 
             WebServices.CheckVersion(App.CurrentVersion);
-            if (WebServices.WebRequestTest("http://28598519a.github.io/l2d-neko-black"))
-            {
-                wb_live2d.Navigate("http://28598519a.github.io/l2d-neko-black");
-                wb_live2d.Visibility = Visibility.Visible;
-            }
         }
 
+        /// <summary>
+        /// 主程式關閉時保存設定
+        /// </summary>
+        /// <param name="sender">委託</param>
+        /// <param name="e">事件</param>
         private void Window_Closed(object sender, EventArgs e)
         {
             App.Set_rb_Answer_Eng = rb_Answer_Eng.IsChecked.ToString();
@@ -83,10 +83,15 @@ namespace 一丙英文背起來
             App.Set_cb_AllowEnter = cb_AllowEnter.IsChecked.ToString();
             App.Set_cb_pfclim = cb_pfclim.IsChecked.ToString();
 
-            /* 結束程式時保存設定 */
+            // 保存設定
             LoadSetting.SaveSetting();
         }
 
+        /// <summary>
+        /// 選擇題庫並載入列表
+        /// </summary>
+        /// <param name="sender">委託</param>
+        /// <param name="e">路由事件</param>
         private void Btn_Load_txt_list_Click(object sender, RoutedEventArgs e)
         {
             // 開啟選擇檔案視窗
@@ -94,6 +99,7 @@ namespace 一丙英文背起來
             openFileDialog.InitialDirectory = App.Root;
             openFileDialog.Filter = "(*.db;*.txt;*.xls;*.xlsx)|*.db;*.txt;*.xls;*.xlsx";
 
+            // 如果視窗開啟有成功
             if (openFileDialog.ShowDialog() == true)
             {
                 App.FileRoot = openFileDialog.FileName;
@@ -108,6 +114,7 @@ namespace 一丙英文背起來
                 {
                     try
                     {
+                        // db副檔名的題庫要先用GZIP解壓，再讀取TEXT內容
                         StreamReader stream = new StreamReader(new MemoryStream(GZip.Decompress(File.ReadAllBytes(App.FileRoot))));
                         Database.Load.txt_list(stream.ReadToEnd());
                     }
@@ -125,6 +132,11 @@ namespace 一丙英文背起來
             }
         }
 
+        /// <summary>
+        /// 導出當前題庫的內容，並以選擇的格式保存
+        /// </summary>
+        /// <param name="sender">委託</param>
+        /// <param name="e">路由事件</param>
         private void Btn_FileCovert_Click(object sender, RoutedEventArgs e)
         {
             if (lb_Database_name.Content.ToString() != string.Empty)
@@ -156,6 +168,11 @@ namespace 一丙英文背起來
             }
         }
 
+        /// <summary>
+        /// 載入默認的db檔案(Default.db)
+        /// </summary>
+        /// <param name="sender">委託</param>
+        /// <param name="e">路由事件</param>
         private void Btn_Default_db_Click(object sender, RoutedEventArgs e)
         {
             string DefaultFileName = "Default.db";
@@ -165,6 +182,7 @@ namespace 一丙英文背起來
                 lb_Database_name.Content = DefaultFileName;
                 try
                 {
+                    // db副檔名的題庫要先用GZIP解壓，再讀取TEXT內容
                     var stream = new StreamReader(new MemoryStream(GZip.Decompress(File.ReadAllBytes(DefaultFileName))));
                     Database.Load.txt_list(stream.ReadToEnd());
                 }
@@ -172,6 +190,7 @@ namespace 一丙英文背起來
                 {
                     System.Windows.MessageBox.Show(ex.Message.ToString());
                 }
+                // 依據讀取的內容調整欄位寬度
                 Control.Lv_res_list_autowidth();
             }
             else
@@ -180,27 +199,38 @@ namespace 一丙英文背起來
             }
         }
 
+        /// <summary>
+        /// 開始測驗
+        /// </summary>
+        /// <param name="sender">委託</param>
+        /// <param name="e">路由事件</param>
         private void Btn_test_start_Click(object sender, RoutedEventArgs e)
         {
+            // 如果列表有資料
             if (App.LRC.Count > 0)
             {
+                // 開始測驗按鈕 -> 結束測驗按鈕
                 btn_test_start.Visibility = Visibility.Hidden;
                 btn_test_stop.Visibility = Visibility.Visible;
 
                 Control.Test(true);
-                tb_Answer.Focus();
+                tb_Answer.Focus();  // 跳至輸入框
 
+                // 依列表的題數依序產生一整數陣列
                 List<int> listLinq = new List<int>(Enumerable.Range(0, App.LRC.Count));
 
                 if (lv_res_list.HasItems != false)
                 {
                     if (rb_Order.IsChecked == true)
                     {
-                        App.ResultList = listLinq.OrderBy(o => o).ToList();
+                        // 將這個陣列交給全域變數，用來作為索引值
+                        App.ResultList = listLinq.ToList();
                     }
                     else if (rb_Random.IsChecked == true)
                     {
+                        // 利用產生的GUID產生雜湊值後做為亂數種子
                         Random GetRandomInt = new Random(Guid.NewGuid().GetHashCode());
+                        // 將這個陣列，以亂數排序後，交給全域變數，用來作為索引值
                         App.ResultList = listLinq.OrderBy(o => GetRandomInt.Next()).ToList();
                     }
                     Database.Question.NewQuestion();
@@ -213,8 +243,14 @@ namespace 一丙英文背起來
             }
         }
 
+        /// <summary>
+        /// 結束測驗
+        /// </summary>
+        /// <param name="sender">委託</param>
+        /// <param name="e">路由事件</param>
         private void Btn_test_stop_Click(object sender, RoutedEventArgs e)
         {
+            // 結束測驗按鈕 -> 開始測驗按鈕
             btn_test_start.Visibility = Visibility.Visible;
             btn_test_stop.Visibility = Visibility.Hidden;
 
@@ -223,13 +259,19 @@ namespace 一丙英文背起來
             Control.Test(false);
         }
 
+        /// <summary>
+        /// 送出回答的答案
+        /// </summary>
+        /// <param name="sender">委託</param>
+        /// <param name="e">路由事件</param>
         private void Btn_Answer_Click(object sender, RoutedEventArgs e)
         {
-            tb_Answer.Focus();
+            tb_Answer.Focus(); // 跳至輸入框
 
             int pfclim = 3;
             try
             {
+                // 取得設定的熟練度
                 pfclim = Convert.ToInt32(tb_pfclim.Text);
             }
             catch (Exception ex)
@@ -240,22 +282,36 @@ namespace 一丙英文背起來
 
             if (rb_Answer_Eng.IsChecked == true)
             {
+                // 全部轉小寫、清除標點後進行比對
                 if (Database.Question.CleanInput(tb_Answer.Text.ToLower()) == Database.Question.CleanInput(App.LRC[App.ResultList[App.Index]].NameEng.ToLower()))
                 {
                     Control.ClearText();
                     lb_AnswerCheck.Content = "正確!";
                     if (Math.Abs(App.LRC[App.ResultList[App.Index]].Proficiency) < Math.Abs(pfclim))
                     {
+                        // 熟練度提升
                         App.LRC[App.ResultList[App.Index]].Proficiency++;
                     }
                     Control.Set_Lv_res_list();
-                    do { App.Index++; } while (App.LRC[App.ResultList[App.Index]].Proficiency >= pfclim && cb_pfclim.IsChecked == true);
-                    Database.Question.NewQuestion();
+                    
+                    do{
+                        App.Index++;
+                        if (App.Index > App.ResultList.Count - 1)
+                        {
+                            break;
+                        }
+                    } while (App.LRC[App.ResultList[App.Index]].Proficiency >= pfclim && cb_pfclim.IsChecked == true) ;
+
+                    if (!Database.Question.NewQuestion())
+                    {
+                        Btn_test_stop_Click(sender, e);
+                    }
                 }
                 else
                 {
                     if (Math.Abs(App.LRC[App.ResultList[App.Index]].Proficiency) < Math.Abs(pfclim))
                     {
+                        // 熟練度下降
                         App.LRC[App.ResultList[App.Index]].Proficiency--;
                     }
                     Control.Set_Lv_res_list();
@@ -268,40 +324,61 @@ namespace 一丙英文背起來
             }
             else if (rb_Answer_Cht.IsChecked == true)
             {
+                // 清除標點後進行比對
                 if (Database.Question.CleanInput(tb_Answer.Text) == Database.Question.CleanInput(App.LRC[App.ResultList[App.Index]].NameCht))
                 {
                     Control.ClearText();
                     lb_AnswerCheck.Content = "正確!";
                     if (Math.Abs(App.LRC[App.ResultList[App.Index]].Proficiency) < Math.Abs(pfclim))
                     {
+                        // 熟練度提升
                         App.LRC[App.ResultList[App.Index]].Proficiency++;
                     }
                     Control.Set_Lv_res_list();
-                    do { App.Index++; } while (App.LRC[App.ResultList[App.Index]].Proficiency >= pfclim && cb_pfclim.IsChecked == true);
-                    Database.Question.NewQuestion();
+
+                    do
+                    {
+                        App.Index++;
+                        if (App.Index > App.ResultList.Count - 1)
+                        {
+                            break;
+                        }
+                    } while (App.LRC[App.ResultList[App.Index]].Proficiency >= pfclim && cb_pfclim.IsChecked == true);
+
+                    if (!Database.Question.NewQuestion())
+                    {
+                        Btn_test_stop_Click(sender, e);
+                    }
                 }
                 else
                 {
                     if (Math.Abs(App.LRC[App.ResultList[App.Index]].Proficiency) < Math.Abs(pfclim))
                     {
+                        // 熟練度下降
                         App.LRC[App.ResultList[App.Index]].Proficiency--;
                     }
                     Control.Set_Lv_res_list();
                     lb_Again_count.Content = App.Again_Count;
                     lb_AnswerCheck.Content = "錯誤!" + Environment.NewLine + "正確答案為 " + App.LRC[App.ResultList[App.Index]].NameCht;
                     Control.Test(false);
-                    tb_Again.Focus();
+                    tb_Again.Focus(); // 跳至輸入框
                 }
             }
         }
 
+        /// <summary>
+        /// 送出練習的答案
+        /// </summary>
+        /// <param name="sender">委託</param>
+        /// <param name="e">路由事件</param>
         private void Btn_Again_Click(object sender, RoutedEventArgs e)
         {
-            tb_Again.Focus();
+            tb_Again.Focus(); // 跳至輸入框
 
             int AgainTimes = 3;
             try
             {
+                // 取得設定的練習次數
                 AgainTimes = Convert.ToInt32(tb_Again_times.Text);
             }
             catch(Exception ex)
@@ -312,10 +389,12 @@ namespace 一丙英文背起來
 
             if (rb_Answer_Eng.IsChecked == true)
             {
+                // 全部轉小寫、清除標點後進行比對
                 if (Database.Question.CleanInput(tb_Again.Text.ToLower()) == Database.Question.CleanInput(App.LRC[App.ResultList[App.Index]].NameEng.ToLower()))
                 {
                     if (App.Again_Count < AgainTimes)
                     {
+                        // 完成一次練習
                         App.Again_Count++;
                         lb_Again_count.Content = App.Again_Count;
                         tb_Again.Text = string.Empty;
@@ -324,7 +403,7 @@ namespace 一丙英文背起來
                         {
                             Control.EndExercise();
                             Database.Question.NewQuestion();
-                            tb_Answer.Focus();
+                            tb_Answer.Focus(); // 跳至輸入框
                         }
                     }
                 }
@@ -335,10 +414,12 @@ namespace 一丙英文背起來
             }
             else if (rb_Answer_Cht.IsChecked == true)
             {
+                // 清除標點後進行比對
                 if (Database.Question.CleanInput(tb_Again.Text) == Database.Question.CleanInput(App.LRC[App.ResultList[App.Index]].NameCht))
                 {
                     if (App.Again_Count < AgainTimes)
                     {
+                        // 完成一次練習
                         App.Again_Count++;
                         lb_Again_count.Content = App.Again_Count;
                         tb_Again.Text = string.Empty;
@@ -347,7 +428,7 @@ namespace 一丙英文背起來
                         {
                             Control.EndExercise();
                             Database.Question.NewQuestion();
-                            tb_Answer.Focus();
+                            tb_Answer.Focus(); // 跳至輸入框
                         }
                     }
                 }
@@ -356,8 +437,13 @@ namespace 一丙英文背起來
                     tb_Again.Text = string.Empty;
                 }
             }
-        } 
+        }
 
+        /// <summary>
+        /// 偵測輸入框的輸入內容
+        /// </summary>
+        /// <param name="sender">委託</param>
+        /// <param name="e">路由事件</param>
         private void Tb_Answer_KeyDown(object sender, KeyEventArgs e)
         {
             //讀到輸入Enter 且 允許以Enter送出
@@ -368,6 +454,11 @@ namespace 一丙英文背起來
             }
         }
 
+        /// <summary>
+        /// 偵測輸入框的輸入內容
+        /// </summary>
+        /// <param name="sender">委託</param>
+        /// <param name="e">路由事件</param>
         private void Tb_Again_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             //讀到輸入Enter 且 允許以Enter送出
@@ -378,12 +469,22 @@ namespace 一丙英文背起來
             }
         }
 
+        /// <summary>
+        /// 關於這個程式
+        /// </summary>
+        /// <param name="sender">委託</param>
+        /// <param name="e">路由事件</param>
         private void Mi_about_Click(object sender, RoutedEventArgs e)
         {
             AboutWindow aboutWindow = new AboutWindow();
             aboutWindow.Show();
         }
 
+        /// <summary>
+        /// 歸零熟練度
+        /// </summary>
+        /// <param name="sender">委託</param>
+        /// <param name="e">路由事件</param>
         private void Btn_clrpfs_Click(object sender, RoutedEventArgs e)
         {
             for ( int i = 0; i < App.LRC.Count; i++)
@@ -393,6 +494,11 @@ namespace 一丙英文背起來
             Control.Set_Lv_res_list();
         }
 
+        /// <summary>
+        /// 網頁加載完成
+        /// </summary>
+        /// <param name="sender">委託</param>
+        /// <param name="e">瀏覽事件</param>
         private void Wb_live2d_LoadCompleted(object sender, System.Windows.Navigation.NavigationEventArgs e)
         {
             string script1 = "document.body.style.overflow ='hidden'";     //關閉Scrollbar
@@ -400,6 +506,43 @@ namespace 一丙英文背起來
             WebBrowser wb = (WebBrowser)sender;
             wb.InvokeScript("execScript", new Object[] { script1, "JavaScript" });
             wb.InvokeScript("execScript", new Object[] { script2, "JavaScript" });
+        }
+
+        /// <summary>
+        /// Live2D選擇黑貓
+        /// </summary>
+        /// <param name="sender">委託</param>
+        /// <param name="e">路由事件</param>
+        private void Rb_Live2d_nekob_Checked(object sender, RoutedEventArgs e)
+        {
+            Callneko("http://28598519a.github.io/l2d-neko-black");
+        }
+
+        /// <summary>
+        /// Live2D選擇白貓
+        /// </summary>
+        /// <param name="sender">委託</param>
+        /// <param name="e">路由事件</param>
+        private void Rb_Live2d_nekow_Checked(object sender, RoutedEventArgs e)
+        {
+            Callneko("http://28598519a.github.io/l2d-neko-white");
+        }
+
+        /// <summary>
+        /// 嘗試加載網頁內容
+        /// </summary>
+        /// <param name="url">網址</param>
+        private void Callneko(string url)
+        {
+            if (WebServices.WebRequestTest(url))
+            {
+                wb_live2d.Navigate(url);
+                wb_live2d.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                wb_live2d.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }

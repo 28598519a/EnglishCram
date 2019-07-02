@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 using Excel = Microsoft.Office.Interop.Excel; //Define為Excel，以避免Application名稱衝突
 
 namespace 一丙英文背起來
@@ -12,19 +13,44 @@ namespace 一丙英文背起來
     {
         public class Question
         {
-            public static void NewQuestion()
+            /// <summary>
+            /// 產生新的題目
+            /// </summary>
+            /// <returns>產生成功</returns>
+            public static bool NewQuestion()
             {
                 if (App.Index >= App.ResultList.Count)
                 {
                     App.Index = 0;
                     Random GetRandomInt = new Random(Guid.NewGuid().GetHashCode());
                     App.ResultList = App.ResultList.OrderBy(o => GetRandomInt.Next()).ToList();
+
+                    // 取得設定的熟練度
+                    int pfclim = Convert.ToInt32(((MainWindow)Application.Current.MainWindow).tb_pfclim.Text);
+                    for (int i = App.ResultList.Count - 1; i >= 0; )
+                    {
+                        if (App.LRC[App.ResultList[i]].Proficiency >= pfclim)
+                        {
+                            if (i.Equals(0)) return false;
+                            i--;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
                 }
                 if (((MainWindow)Application.Current.MainWindow).rb_Answer_Eng.IsChecked == true)
                     ((MainWindow)Application.Current.MainWindow).lb_Question.Content = App.LRC[App.ResultList.ToList()[App.Index]].NameCht;
                 else ((MainWindow)Application.Current.MainWindow).lb_Question.Content = App.LRC[App.ResultList.ToList()[App.Index]].NameEng;
+                return true;
             }
 
+            /// <summary>
+            /// 清理輸入內容
+            /// </summary>
+            /// <param name="strIn">輸入內容</param>
+            /// <returns>純文字</returns>
             public static string CleanInput(string strIn)
             {
                 // \W 匹配任何非文字字元 (亦可用^\w)
@@ -43,6 +69,10 @@ namespace 一丙英文背起來
 
         public class Load
         {
+            /// <summary>
+            /// txt題庫導入列表
+            /// </summary>
+            /// <param name="fileText">txt檔的文字內容</param>
             public static void txt_list(string fileText)
             {
                 App.LRC.Clear();
@@ -88,6 +118,10 @@ namespace 一丙英文背起來
                 }
             }
 
+            /// <summary>
+            /// excel題庫導入列表
+            /// </summary>
+            /// <param name="filePath">excel檔案路徑</param>
             public static void Excel_list(string filePath)
             {
                 App.LRC.Clear();
@@ -152,6 +186,10 @@ namespace 一丙英文背起來
 
         public class Save
         {
+            /// <summary>
+            /// 保存列表為db題庫
+            /// </summary>
+            /// <param name="path">存檔路徑</param>
             public static void As_db(string path)
             {
                 path += ".db";
@@ -167,6 +205,10 @@ namespace 一丙英文背起來
                 File.WriteAllBytes(path, GZip.Compress(List_bytes));
             }
 
+            /// <summary>
+            /// 保存列表為txt題庫
+            /// </summary>
+            /// <param name="path">存檔路徑</param>
             public static void As_txt(string path)
             {
                 path += ".txt";
@@ -181,6 +223,10 @@ namespace 一丙英文背起來
                 File.WriteAllText(path, LRC2txt());
             }
 
+            /// <summary>
+            /// 列表轉TEXT
+            /// </summary>
+            /// <returns>TEXT</returns>
             private static string LRC2txt()
             {
                 string list = string.Empty;
@@ -193,6 +239,10 @@ namespace 一丙英文背起來
                 return list;
             }
 
+            /// <summary>
+            /// 保存列表為excel題庫
+            /// </summary>
+            /// <param name="path">存檔路徑</param>
             public static void As_excel(string path)
             {
                 // 呼叫Excel程式 且 不顯示
