@@ -34,8 +34,8 @@ namespace 一丙英文背起來
                     }
                 }
                 if (((MainWindow)Application.Current.MainWindow).rb_Answer_Eng.IsChecked == true)
-                    ((MainWindow)Application.Current.MainWindow).lb_Question.Content = App.LRC[App.ResultList.ToList()[App.Index]].NameEng;
-                else ((MainWindow)Application.Current.MainWindow).lb_Question.Content = App.LRC[App.ResultList.ToList()[App.Index]].NameCht;
+                    ((MainWindow)Application.Current.MainWindow).lb_Question.Content = App.LRC[App.ResultList.ToList()[App.Index]].NameCht;
+                else ((MainWindow)Application.Current.MainWindow).lb_Question.Content = App.LRC[App.ResultList.ToList()[App.Index]].NameEng;
                 return true;
             }
 
